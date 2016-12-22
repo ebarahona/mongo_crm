@@ -9,6 +9,11 @@ app.factory("UserFactory", function($http) {
 
   service.register = function(user_registration) {
     console.log("I got the user_registration in the factory: ", user_registration);
+    return $http({
+      method: "POST",
+      url: "/users/register",
+      data: user_registration
+    });
   };
 
 

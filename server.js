@@ -96,7 +96,46 @@ const User = mongoose.model('User', {
 // ROUTE CALLS //
 /////////////////
 //////////////// USER ROUTES /////////////
-// app.post
+app.post("/users/register", function(request, response) {
+  // console.log("This is the request: ", request.body);
+  let salutation = request.body.salutation;
+  let first_name = request.body.first_name;
+  let last_name = request.body.last_name;
+  let username = request.body.username;
+  let email = request.body.email;
+  let password = request.body.password;
+
+  bcrypt.hash(password, saltRounds)
+    .then(function(hash) {
+      let newRegistration = new User({
+        salutation: request.body.salutation,
+        first_name: request.body.first_name,
+        last_name: request.body.last_name,
+        username: request.body.username,
+        email: request.body.email,
+        password: hash
+      });
+
+      // console.log("This is the newRegistration info: ", newRegistration);
+
+      newRegistration.save()
+        .then(function(result) {
+          console.log("Saved successfully: ", result);
+          response.json({
+            message: "Registered user successfully"
+          });
+        })
+        .catch(function(error) {
+          console.log("Didn't save because: ", error.stack);
+        });
+    })
+    .catch(function(error) {
+      console.log("Didn't save because: ", error.stack);
+      response.json({
+        message: "Error message: " + error.stack
+      });
+    });
+});
 
 
 // START THE SERVER
