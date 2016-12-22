@@ -89,11 +89,23 @@ app.controller("LoginController", function($scope, $state, UserFactory) {
 
 app.controller("UsersController", function($scope, UserFactory) {
   console.log("I'm using the UsersController.  Yay!");
-  UserFactory.showUsers();
+  UserFactory.showUsers()
+    .then(function(users) {
+      $scope.users = users.data.users;
+console.log("Here are all the users: ", $scope.users);
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
 });
 
 
 
+
+
+//////////////////
+//    ROUTES    //
+/////////////////
 app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
   .state({

@@ -1,4 +1,19 @@
 <!DOCTYPE html>
 <div class="container">
-  <h3>Hello from the users.html file</h3>
+  <table class="table table-responsive table-striped table-hover ">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Username</th>
+      <th>Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="user in users">
+      <td>{{ user.first_name }} {{ user.last_name }}</td>
+      <td>{{ user.username }}</td>
+      <td>{{ user.email }}</td>
+    </tr>
+  </tbody>
+</table>
 </div>

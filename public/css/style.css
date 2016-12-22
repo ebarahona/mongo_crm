@@ -1,3 +1,10 @@
 /*body {
   background-color: red;
 }*/
+
+
+
+/* Deal with Firefox's awkward fieldset styling involving width that interferes with the responsive table */
+@-moz-document url-prefix() {
+  fieldset { display: table-cell; }
+}
