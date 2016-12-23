@@ -26,7 +26,7 @@
     </thead>
     <tbody>
       <tr ng-repeat="account in accounts | orderBy:sortType:sortReverse">
-        <td>{{ account.name }}</td>
+        <td><a ui-sref="view_account({accountID: account._id})">{{ account.name }}</a></td>
         <td>{{ account.website }}</td>
         <td>{{ account.type }}</td>
         <td>{{ account.industry }}</td>

@@ -397,6 +397,23 @@ app.get("/accounts", function(request, response) {
     });
 });
 
+// ----------- Show An Account --------- //
+app.get("/account/view/:accountID", function(request, response) {
+  let accountID = request.params.accountID;
+  console.log("I'm in the backend", accountID);
+  Account.findById(accountID)
+    .then(function(account) {
+      console.log("Account: ", account);
+      response.json({
+        account: account
+      })
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error looking for that account: ", error.stack);
+    });
+});
+
 
 ///////////// CONTACT ROUTES /////////////
 // ---------- Create Contacts --------- //

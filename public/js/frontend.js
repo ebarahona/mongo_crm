@@ -89,6 +89,15 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
+  // View an accounts
+  service.viewAccount = function(accountID) {
+    console.log("I'm in the factory and I got this: ", accountID);
+    return $http({
+      method: "GET",
+      url: "/account/view/" + accountID,
+    });
+  };
+
   ////////////////////////////////////////////////////////////
   ///////////////////// CONTACT SERVICES /////////////////////
   ////////////////////////////////////////////////////////////
@@ -196,15 +205,14 @@ app.controller("CreateAccountController", function($scope, $state, CRM_Factory) 
   $scope.saveAccount = function() {
     var account_information = $scope.account;
     console.log("Account information: ", account_information);
-    CRM_Factory.createAccount(account_information);
-    console.log("I made it to the backend and back");
-    //   .then(function(success) {
-    //     console.log("We were successful: ", success);
-    //     $state.go("accounts");
-    //   })
-    //   .catch(function(error) {
-    //     console.log("There was an error!!!", error.stack);
-    //   });
+    CRM_Factory.createAccount(account_information)
+      .then(function(success) {
+        console.log("We were successful: ", success);
+        $state.go("accounts");
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
   };
 });
 
@@ -224,6 +232,20 @@ app.controller("AccountsController", function($scope, $rootScope, $state, CRM_Fa
       $scope.accounts = accounts.data.accounts;
       console.log("Accounts from backend:",  $scope.accounts);
       $state.go("accounts");
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
+});
+
+app.controller("ViewAccountController", function($scope, $stateParams, CRM_Factory) {
+  console.log("I'm in the ViewAccountController");
+  console.log("stateParams", $stateParams);
+  let account_id = $stateParams.accountID;
+  CRM_Factory.viewAccount(account_id)
+    .then(function(account_info) {
+      $scope.account = account_info.data.account;
+      console.log("Account info: ", $scope.account);
     })
     .catch(function(error) {
       console.log("There was an error!!!", error);
@@ -309,6 +331,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Account/create",
     templateUrl: "views/create_account.html",
     controller: "CreateAccountController"
+  })
+  .state({
+    name: "view_account",
+    url: "/Account/view/{accountID}",
+    templateUrl: "views/view_account.html",
+    controller: "ViewAccountController"
   })
   .state({
     name: "contacts",
