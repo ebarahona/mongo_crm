@@ -163,21 +163,31 @@ app.post("/users/login", function(request, response) {
             console.log("\n\nThis is the user: ", user);
             var token = uuidV4();
             console.log("This is my special token.  Don't touch: ", token);
-            return User.update(
-              { username: username },
-              {
-                $set: {
-                  token: token
+            return bluebird.all([
+              user,
+              token,
+              User.update(
+                { username: username },
+                {
+                  $set: {
+                    token: token
+                  }
                 }
-              });
+              )
+            ]);
+
           } else {
             throw new Error("You are not allowed to enter");
           }
         });
     })
-    .then(function(updated_user) {
+    .then(function(user_information) {
+      console.log("\n\n\nHere's the user_information: ", user_information);
+      let user = user_information[0];
+      let token = user_information[1];
       response.json({
-        message: "Updated user"
+        user_information: user,
+        token: token
       });
     })
     .catch(function(error) {
@@ -187,7 +197,7 @@ app.post("/users/login", function(request, response) {
       });
     });
 });
-//
+
 // // ----------- Show All Users --------- //
 app.get("/users", function(request, response) {
   console.log("I'm in the backend and want to show you all my users");
@@ -205,6 +215,11 @@ app.get("/users", function(request, response) {
         message: "There was an error getting the users"
       });
     });
+});
+
+// // ----------- Remove User's Token --------- //
+app.post("/users/remove_token", function(request, response) {
+  console.log("I'm in the backend trying to remove a token!");
 });
 
 

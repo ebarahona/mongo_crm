@@ -4,9 +4,32 @@ var app = angular.module("crm_app", ["ui.router", "ngCookies"]);
 // FACTORIES //
 //////////////
 ///////////////////// USER FACTORY ///////////////////////
-app.factory("UserFactory", function($http) {
-  let service = {};
+app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
+  var service = {};
 
+  $rootScope.CRM_FactoryCookieData = $cookies.getObject("cookieData");
+  console.log("This is the factory cookie: ", $rootScope.CRM_FactoryCookieData);
+
+  if ($rootScope.CRM_FactoryCookieData) {
+    $rootScope.authToken = $rootScope.CRM_FactoryCookieData.data.token;
+    $rootScope.user = $rootScope.CRM_FactoryCookieData.data.user_information;
+  }
+
+
+  $rootScope.logout = function() {
+    // console.log("Entered the logout function");
+    // remove method => pass in the value of the cookie you want to remove
+    $cookies.remove('cookieData');
+    // reset all the scope variables
+    $rootScope.CRM_FactoryCookieData = null;
+    $rootScope.authToken = null;
+    $rootScope.userID = null;
+    $state.go("home");
+  };
+
+  ////////////////////////////////////////////////////////////
+  ////////////////////// USER SERVICES ///////////////////////
+  ////////////////////////////////////////////////////////////
 
   // Register a user
   service.register = function(user_registration) {
@@ -55,12 +78,12 @@ app.controller("HomeController", function($scope, $state) {
 
 
 //////////////// USER-SPECIFIC CONTROLLERS ///////////////
-app.controller("RegisterController", function($scope, $state, UserFactory) {
+app.controller("RegisterController", function($scope, $state, CRM_Factory) {
   // console.log("I'm using the RegisterController");
   $scope.register = function() {
     var user_registration = $scope.user;
     delete user_registration.password2;
-    UserFactory.register(user_registration)
+    CRM_Factory.register(user_registration)
       .then(function(success) {
         console.log("We were successful: ", success);
         $state.go("login");
@@ -71,14 +94,24 @@ app.controller("RegisterController", function($scope, $state, UserFactory) {
   };
 });
 
-app.controller("LoginController", function($scope, $state, UserFactory) {
-  // console.log("I'm using the LoginController");
+app.controller("LoginController", function($scope, $state, $cookies, $rootScope, CRM_Factory) {
+  $scope.user = {
+    username: "",
+    password: ""
+  };
+  console.log("I'm using the LoginController");
   $scope.login = function() {
     console.log("You clicked the login button");
     var login_information = $scope.user;
-    UserFactory.login(login_information)
-      .then(function(success) {
-        console.log("We were successful: ", success);
+    CRM_Factory.login(login_information)
+      .then(function(login_result) {
+        console.log("We were successful: ", login_result);
+        $cookies.putObject("cookieData", login_result);
+        $rootScope.cookie_data = login_result;
+        $rootScope.user = login_result.data.user_information;
+        $rootScope.authToken = login_result.data.token;
+        // $route.reload();
+        console.log("username", $scope.user.username);
         $state.go("home");
       })
       .catch(function(error) {
@@ -87,12 +120,11 @@ app.controller("LoginController", function($scope, $state, UserFactory) {
   };
 });
 
-app.controller("UsersController", function($scope, UserFactory) {
-  console.log("I'm using the UsersController.  Yay!");
-  UserFactory.showUsers()
+app.controller("UsersController", function($scope, CRM_Factory) {
+  // console.log("I'm using the UsersController.  Yay!");
+  CRM_Factory.showUsers()
     .then(function(users) {
       $scope.users = users.data.users;
-console.log("Here are all the users: ", $scope.users);
     })
     .catch(function(error) {
       console.log("There was an error!!!", error);
