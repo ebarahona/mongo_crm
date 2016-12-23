@@ -79,6 +79,17 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
+  // Show all contacts
+  service.showContacts = function() {
+    console.log("I'm in the factory trying to show you all the contacts!!");
+    return $http({
+      method: "GET",
+      url: "/contacts"
+    });
+  };
+
+
+
 
 
 
@@ -169,9 +180,19 @@ app.controller("CreateContactController", function($scope, $state, CRM_Factory) 
 
 app.controller("ContactsController", function($scope, $rootScope, $state, CRM_Factory) {
   console.log("I'm using the ContactsController.  Yay!");
+
   $scope.createContact = function() {
     $state.go("create_contact");
   };
+
+  CRM_Factory.showContacts()
+    .then(function(contacts) {
+      $scope.contacts = contacts.data.contacts;
+      console.log("Contacts from backend:",  $scope.contacts);
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
 });
 
 

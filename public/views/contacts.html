@@ -22,11 +22,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+      <tr ng-repeat="contact in contacts">
+        <td>{{ contact.first_name }} {{ contact.last_name }}</td>
+        <td>{{ contact.account }}</td>
+        <td>{{ contact.email }}</td>
+        <td>{{ contact.phone }}</td>
       </tr>
     </tbody>
     </table>

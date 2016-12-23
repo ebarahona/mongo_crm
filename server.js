@@ -258,7 +258,7 @@ app.post("/users/login", function(request, response) {
     });
 });
 
-// // ----------- Show All Users --------- //
+// ----------- Show All Users --------- //
 app.get("/users", function(request, response) {
   console.log("I'm in the backend and want to show you all my users");
   User.find()
@@ -331,6 +331,25 @@ app.post("/contacts/create", function(request, response) {
       console.log("Didn't create contact because: ", error.stack);
     });
 
+});
+
+// ---------- Show All Contacts -------- //
+app.get("/contacts", function(request, response) {
+  console.log("I'm in the backend and want to show you all my contacts");
+  Contact.find()
+    .then(function(contacts) {
+      console.log("\nHere are my contacts: \n", contacts);
+      response.json({
+        contacts: contacts
+      });
+    })
+    .catch(function(error) {
+      console.log("There was an error getting the contacts");
+      response.status(401) ;
+      response.json({
+        message: "There was an error getting the contacts"
+      });
+    });
 });
 
 
