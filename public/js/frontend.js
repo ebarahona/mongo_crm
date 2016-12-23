@@ -1,14 +1,14 @@
 var app = angular.module("crm_app", ["ui.router", "ngCookies"]);
 
+
+////////////////
+/// FACTORY ///
 ///////////////
-// FACTORIES //
-//////////////
-///////////////////// USER FACTORY ///////////////////////
 app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
   var service = {};
 
   $rootScope.CRM_FactoryCookieData = $cookies.getObject("cookieData");
-  console.log("This is the factory cookie: ", $rootScope.CRM_FactoryCookieData);
+  // console.log("This is the factory cookie: ", $rootScope.CRM_FactoryCookieData);
 
   if ($rootScope.CRM_FactoryCookieData) {
     $rootScope.authToken = $rootScope.CRM_FactoryCookieData.data.token;
@@ -60,6 +60,25 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
+  ////////////////////////////////////////////////////////////
+  ///////////////////// CONTACT SERVICES /////////////////////
+  ////////////////////////////////////////////////////////////
+
+  // Create a contact
+  service.createContact = function(contact_info) {
+    var user_id = $rootScope.user._id;
+    console.log("ID of the user that clicked the save contact button: ", user_id);
+    console.log("Contact info: ", contact_info);
+    return $http({
+      method: "POST",
+      url: "/contacts/create",
+      data: {
+        user_id: user_id,
+        contact_info: contact_info
+      }
+    });
+  };
+
 
 
 
@@ -67,17 +86,17 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 });
 
 
-//////////////////
-// CONTROLLERS //
-/////////////////
+///////////////////////////////////////////////////////
+///////////////////// CONTROLLERS /////////////////////
+///////////////////////////////////////////////////////
 
 ///////////////////// HOME CONTROLLER ////////////////////
-app.controller("HomeController", function($scope, $state) {
+app.controller("HomeController", function($scope, $state, CRM_Factory) {
   console.log("I'm using the HomeController");
 });
 
 
-//////////////// USER-SPECIFIC CONTROLLERS ///////////////
+//////////// USER-SPECIFIC CONTROLLERS ///////////
 app.controller("RegisterController", function($scope, $state, CRM_Factory) {
   // console.log("I'm using the RegisterController");
   $scope.register = function() {
@@ -131,7 +150,29 @@ app.controller("UsersController", function($scope, CRM_Factory) {
     });
 });
 
+//////////// CONTACT-SPECIFIC CONTROLLERS ///////////
+app.controller("CreateContactController", function($scope, $state, CRM_Factory) {
+  console.log("I'm using the CreateContactController.  Yay!");
+  $scope.saveContact = function() {
+    var contact_information = $scope.contact;
+    console.log("Contact information: ", contact_information);
+    CRM_Factory.createContact(contact_information)
+      .then(function(success) {
+        console.log("We were successful: ", success);
+        $state.go("contacts");
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+});
 
+app.controller("ContactsController", function($scope, $rootScope, $state, CRM_Factory) {
+  console.log("I'm using the ContactsController.  Yay!");
+  $scope.createContact = function() {
+    $state.go("create_contact");
+  };
+});
 
 
 
@@ -148,21 +189,33 @@ app.config(function($stateProvider, $urlRouterProvider) {
   })
   .state({
     name: "users",
-    url: "/users",
+    url: "/Users",
     templateUrl: "views/users.html",
     controller: "UsersController"
   })
   .state({
     name: "register",
-    url: "/users/register",
+    url: "/User/register",
     templateUrl: "views/register.html",
     controller: "RegisterController"
   })
   .state({
     name: "login",
-    url: "/users/login",
+    url: "/User/login",
     templateUrl: "views/login.html",
     controller: "LoginController"
+  })
+  .state({
+    name: "contacts",
+    url: "/Contacts",
+    templateUrl: "views/contacts.html",
+    controller: "ContactsController"
+  })
+  .state({
+    name: "create_contact",
+    url: "/Contact/create",
+    templateUrl: "views/create_contact.html",
+    controller: "CreateContactController"
   });
 
   $urlRouterProvider.otherwise("/");

@@ -2,7 +2,12 @@
   background-color: red;
 }*/
 
-
+/*
+ * Navigation Bar Styles
+ */
+#logout {
+  cursor: pointer;
+}
 
 /* Deal with Firefox's awkward fieldset styling involving width that interferes with the responsive table */
 @-moz-document url-prefix() {

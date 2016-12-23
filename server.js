@@ -58,10 +58,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-////////////////
-// USER MODEL //
-////////////////
-const User = mongoose.model('User', {
+///////////////////////////////////////////////////////
+/////////////////////// MODELS ////////////////////////
+///////////////////////////////////////////////////////
+
+///////////////////// USER MODEL //////////////////////
+const User = mongoose.model("User", {
   salutation: {
     type: String
   },
@@ -91,6 +93,74 @@ const User = mongoose.model('User', {
   }
 });
 
+////////////////// CONTACTS MODEL ////////////////////
+const Contact = mongoose.model("Contact", {
+  salutation: {
+    type: String
+  },
+  first_name: {
+    type: String,
+    required: true
+  },
+  last_name: {
+    type: String
+  },
+  email: {
+    type: String
+  },
+  phone: [{
+    type: String
+  }],
+  address: {
+    type: String
+  },
+  address2: {
+    type: String
+  },
+  city: {
+    type: String
+  },
+  state: {
+    type: String
+  },
+  zip_code: {
+    type: String
+  },
+  do_not_call: {
+    type: Boolean
+  },
+  description: {
+    type: String
+  },
+  twitter: {
+    type: String
+  },
+  linkedin: {
+    type: String
+  },
+  facebook: {
+    type: String
+  },
+  github: {
+    type: String
+  },
+  account: [{
+    name: String,
+    _id: mongoose.Schema.Types.ObjectId
+  }],
+  ownerID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  created_at: {
+    type: Date,
+    required: true
+  },
+  created_by_ID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+});
 
 
 
@@ -103,14 +173,6 @@ const User = mongoose.model('User', {
 //////////////// USER ROUTES /////////////
 // ----------- Register Users --------- //
 app.post("/users/register", function(request, response) {
-  // console.log("This is the request: ", request.body);
-  let salutation = request.body.salutation;
-  let first_name = request.body.first_name;
-  let last_name = request.body.last_name;
-  let username = request.body.username;
-  let email = request.body.email;
-  let password = request.body.password;
-
   bcrypt.hash(password, saltRounds)
     .then(function(hash) {
       let newRegistration = new User({
@@ -121,8 +183,6 @@ app.post("/users/register", function(request, response) {
         email: request.body.email,
         password: hash
       });
-
-      // console.log("This is the newRegistration info: ", newRegistration);
 
       newRegistration.save()
         .then(function(result) {
@@ -217,13 +277,61 @@ app.get("/users", function(request, response) {
     });
 });
 
-// // ----------- Remove User's Token --------- //
-app.post("/users/remove_token", function(request, response) {
-  console.log("I'm in the backend trying to remove a token!");
+// ----------- Remove User's Token --------- //
+// NOT CURRENTLY IN PLACE
+// app.post("/users/remove_token", function(request, response) {
+//   console.log("I'm in the backend trying to remove a token!");
+// });
+
+
+////////////// CONTACT ROUTES ////////////
+// ------------ Create Users ---------- //
+app.post("/contacts/create", function(request, response) {
+  let user_id = request.body.user_id;
+  console.log("This is the request sent from the front end: ", request.body);
+  // let first_name = request.body.first_name;
+  // let last_name = request.body.last_name;
+  // let email = request.body.email;
+  // let phone = request.body.phone;
+  // let address = request.body.address;
+  // let address2 = request.body.address2;
+  // let city = request.body.city;
+  // let state = request.body.state;
+  // let zip_code = request.body.zip_code;
+  // let account = request.body.account;
+  // let description = request.body.description;
+
+  let newContact = new Contact({
+    salutation: request.body.contact_info.salutation,
+    first_name: request.body.contact_info.first_name,
+    last_name: request.body.contact_info.last_name,
+    email: request.body.contact_info.email,
+    phone: request.body.contact_info.phone,
+    address: request.body.contact_info.address,
+    address2: request.body.contact_info.address2,
+    city: request.body.contact_info.city,
+    state: request.body.contact_info.state,
+    zip_code: request.body.contact_info.zip_code,
+    description: request.body.contact_info.description,
+    account: request.body.contact_info.account,
+    ownerID: user_id,
+    created_at: new Date(),
+    created_by_ID: user_id
+  });
+
+  newContact.save()
+    .then(function(result) {
+      console.log("Contact created successfully: ", result);
+      response.json({
+        message: "Contact created successfully"
+      });
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("Didn't create contact because: ", error.stack);
+    });
+
 });
-
-
-
 
 
 
