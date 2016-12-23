@@ -93,6 +93,59 @@ const User = mongoose.model("User", {
   }
 });
 
+////////////////// ACCOUNTS MODEL ////////////////////
+const Account = mongoose.model("Account", {
+  name: {
+    type: String
+  },
+  email: {
+    type: String
+  },
+  phone: [{
+    type: String
+  }],
+  website: {
+    type: String
+  },
+  address: {
+    type: String
+  },
+  address2: {
+    type: String
+  },
+  city: {
+    type: String
+  },
+  state: {
+    type: String
+  },
+  zip_code: {
+    type: String
+  },
+  type: {
+    type: String
+  },
+  description: {
+    type: String
+  },
+  contacts: [{
+    name: String,
+    _id: mongoose.Schema.Types.ObjectId
+  }],                // Not currently working!!!
+  ownerID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  created_at: {
+    type: Date,
+    required: true
+  },
+  created_by_ID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+});
+
 ////////////////// CONTACTS MODEL ////////////////////
 const Contact = mongoose.model("Contact", {
   salutation: {
@@ -170,8 +223,9 @@ const Contact = mongoose.model("Contact", {
 /////////////////
 // ROUTE CALLS //
 /////////////////
+
 //////////////// USER ROUTES /////////////
-// ----------- Register Users --------- //
+// ----------- Register User ---------- //
 app.post("/users/register", function(request, response) {
   bcrypt.hash(password, saltRounds)
     .then(function(hash) {
@@ -203,7 +257,7 @@ app.post("/users/register", function(request, response) {
     });
 });
 
-// ----------- Login Users --------- //
+// ----------- Login User ---------- //
 app.post("/users/login", function(request, response) {
   console.log("This is the request from the front end: ", request.body);
   let username = request.body.username;
@@ -284,22 +338,72 @@ app.get("/users", function(request, response) {
 // });
 
 
-////////////// CONTACT ROUTES ////////////
-// ------------ Create Users ---------- //
+////////////// ACCOUNT ROUTES /////////////
+// ----------- Create Account ---------- //
+app.post("/accounts/create", function(request, response) {
+  let user_id = request.body.user_id;
+  console.log("This is the request sent from the front end: ", request.body);
+  console.log("Contacts information: ", request.body.account_info.contacts);
+
+  let newAccount = new Account({
+    name: request.body.account_info.name,
+    email: request.body.account_info.email,
+    phone: request.body.account_info.phone,
+    website: request.body.account_info.website,
+    address: request.body.account_info.address,
+    address2: request.body.account_info.address2,
+    city: request.body.account_info.city,
+    state: request.body.account_info.state,
+    zip_code: request.body.account_info.zip_code,
+    type: request.body.account_info.type,
+    description: request.body.account_info.description,
+    // contacts: request.body.contacts_info.contacts,     // Not currently working!!!
+    ownerID: user_id,
+    created_at: new Date(),
+    created_by_ID: user_id
+  });
+
+  newAccount.save()
+    .then(function(result) {
+      console.log("Account created successfully: ", result);
+      response.json({
+        message: "Account created successfully"
+      });
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("Didn't create account because: ", error.stack);
+      console.log("\n\n\n");
+      console.log("Didn't create account because: ", error);
+    });
+
+});
+
+// ---------- Show All Contacts -------- //
+app.get("/accounts", function(request, response) {
+  console.log("I'm in the backend and want to show you all my accounts");
+  Contact.find()
+    .then(function(accounts) {
+      console.log("\nHere are my accounts: \n", accounts);
+      response.json({
+        accounts: accounts
+      });
+    })
+    .catch(function(error) {
+      console.log("There was an error getting the accounts");
+      response.status(401) ;
+      response.json({
+        message: "There was an error getting the accounts"
+      });
+    });
+});
+
+
+///////////// CONTACT ROUTES /////////////
+// ---------- Create Contacts --------- //
 app.post("/contacts/create", function(request, response) {
   let user_id = request.body.user_id;
   console.log("This is the request sent from the front end: ", request.body);
-  // let first_name = request.body.first_name;
-  // let last_name = request.body.last_name;
-  // let email = request.body.email;
-  // let phone = request.body.phone;
-  // let address = request.body.address;
-  // let address2 = request.body.address2;
-  // let city = request.body.city;
-  // let state = request.body.state;
-  // let zip_code = request.body.zip_code;
-  // let account = request.body.account;
-  // let description = request.body.description;
 
   let newContact = new Contact({
     salutation: request.body.contact_info.salutation,

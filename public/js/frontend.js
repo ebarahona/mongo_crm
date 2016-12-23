@@ -61,6 +61,35 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
   };
 
   ////////////////////////////////////////////////////////////
+  ///////////////////// ACCOUNT SERVICES /////////////////////
+  ////////////////////////////////////////////////////////////
+
+  // Create an account
+  service.createAccount = function(account_info) {
+    var user_id = $rootScope.user._id;
+    console.log("I'm in the Factory -- Account Services");
+    console.log("ID of the user that clicked the save account button: ", user_id);
+    console.log("Account info: ", account_info);
+    return $http({
+      method: "POST",
+      url: "/accounts/create",
+      data: {
+        user_id: user_id,
+        account_info: account_info
+      }
+    });
+  };
+
+  // Show all accounts
+  service.showAccounts = function() {
+    console.log("I'm in the factory trying to show you all the accounts!!");
+    return $http({
+      method: "GET",
+      url: "/accounts"
+    });
+  };
+
+  ////////////////////////////////////////////////////////////
   ///////////////////// CONTACT SERVICES /////////////////////
   ////////////////////////////////////////////////////////////
 
@@ -161,6 +190,45 @@ app.controller("UsersController", function($scope, CRM_Factory) {
     });
 });
 
+//////////// ACCOUNT-SPECIFIC CONTROLLERS ///////////
+app.controller("CreateAccountController", function($scope, $state, CRM_Factory) {
+  console.log("I'm using the CreateAccountController.  Yay!");
+  $scope.saveAccount = function() {
+    var account_information = $scope.account;
+    console.log("Account information: ", account_information);
+    CRM_Factory.createAccount(account_information);
+    console.log("I made it to the backend and back");
+    //   .then(function(success) {
+    //     console.log("We were successful: ", success);
+    //     $state.go("accounts");
+    //   })
+    //   .catch(function(error) {
+    //     console.log("There was an error!!!", error.stack);
+    //   });
+  };
+});
+
+app.controller("AccountsController", function($scope, $rootScope, $state, CRM_Factory) {
+  console.log("I'm using the AccountsController.  Yay!");
+
+  // $scope.sortType = "name"; // set the default sort type
+  // $scope.sortReverse = false;  // set the default sort order
+
+  $scope.createAccount = function() {
+    console.log("Clicked the createAccount button");
+    $state.go("create_account");
+  };
+
+  // CRM_Factory.showAccounts()
+  //   .then(function(accounts) {
+  //     $scope.accounts = accounts.data.accounts;
+  //     console.log("Accounts from backend:",  $scope.accounts);
+  //   })
+  //   .catch(function(error) {
+  //     console.log("There was an error!!!", error);
+  //   });
+});
+
 //////////// CONTACT-SPECIFIC CONTROLLERS ///////////
 app.controller("CreateContactController", function($scope, $state, CRM_Factory) {
   console.log("I'm using the CreateContactController.  Yay!");
@@ -180,6 +248,9 @@ app.controller("CreateContactController", function($scope, $state, CRM_Factory) 
 
 app.controller("ContactsController", function($scope, $rootScope, $state, CRM_Factory) {
   console.log("I'm using the ContactsController.  Yay!");
+
+  $scope.sortType = "first_name"; // set the default sort type
+  $scope.sortReverse = false;  // set the default sort order
 
   $scope.createContact = function() {
     $state.go("create_contact");
@@ -225,6 +296,18 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/User/login",
     templateUrl: "views/login.html",
     controller: "LoginController"
+  })
+  .state({
+    name: "accounts",
+    url: "/Accounts",
+    templateUrl: "views/accounts.html",
+    controller: "AccountsController"
+  })
+  .state({
+    name: "create_account",
+    url: "/Account/create",
+    templateUrl: "views/create_account.html",
+    controller: "CreateAccountController"
   })
   .state({
     name: "contacts",
