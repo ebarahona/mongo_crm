@@ -343,7 +343,6 @@ app.get("/users", function(request, response) {
 app.post("/accounts/create", function(request, response) {
   let user_id = request.body.user_id;
   console.log("This is the request sent from the front end: ", request.body);
-  console.log("Contacts information: ", request.body.account_info.contacts);
 
   let newAccount = new Account({
     name: request.body.account_info.name,
@@ -379,10 +378,10 @@ app.post("/accounts/create", function(request, response) {
 
 });
 
-// ---------- Show All Contacts -------- //
+// ---------- Show All Accounts -------- //
 app.get("/accounts", function(request, response) {
   console.log("I'm in the backend and want to show you all my accounts");
-  Contact.find()
+  Account.find()
     .then(function(accounts) {
       console.log("\nHere are my accounts: \n", accounts);
       response.json({

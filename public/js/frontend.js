@@ -219,14 +219,15 @@ app.controller("AccountsController", function($scope, $rootScope, $state, CRM_Fa
     $state.go("create_account");
   };
 
-  // CRM_Factory.showAccounts()
-  //   .then(function(accounts) {
-  //     $scope.accounts = accounts.data.accounts;
-  //     console.log("Accounts from backend:",  $scope.accounts);
-  //   })
-  //   .catch(function(error) {
-  //     console.log("There was an error!!!", error);
-  //   });
+  CRM_Factory.showAccounts()
+    .then(function(accounts) {
+      $scope.accounts = accounts.data.accounts;
+      console.log("Accounts from backend:",  $scope.accounts);
+      $state.go("accounts");
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
 });
 
 //////////// CONTACT-SPECIFIC CONTROLLERS ///////////
