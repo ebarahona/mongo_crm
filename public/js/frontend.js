@@ -89,12 +89,25 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
-  // View an accounts
+  // View an account
   service.viewAccount = function(accountID) {
     console.log("I'm in the factory and I got this: ", accountID);
     return $http({
       method: "GET",
       url: "/account/view/" + accountID,
+    });
+  };
+
+  // Add contact to account
+  service.addContactToAccount = function(contactID, accountID) {
+    console.log("In the factory.  Here are the IDs sent from the view account page: ", contactID, accountID);
+    return $http({
+      method: "POST",
+      url: "/account/add_contact",
+      data: {
+        contact_id: contactID,
+        account_id: accountID
+      }
     });
   };
 
@@ -123,6 +136,15 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     return $http({
       method: "GET",
       url: "/contacts"
+    });
+  };
+
+  // Search contacts
+  service.searchContacts = function(searchTerm) {
+    console.log("Term being searched in the factory is: ", searchTerm);
+    return $http({
+      method: "GET",
+      url: "/search_contacts/" + searchTerm
     });
   };
 
@@ -241,15 +263,51 @@ app.controller("AccountsController", function($scope, $rootScope, $state, CRM_Fa
 app.controller("ViewAccountController", function($scope, $stateParams, CRM_Factory) {
   console.log("I'm in the ViewAccountController");
   console.log("stateParams", $stateParams);
-  let account_id = $stateParams.accountID;
+  var account_id = $stateParams.accountID;
   CRM_Factory.viewAccount(account_id)
     .then(function(account_info) {
+      console.log("\n\nThis is the account_info: ", account_info);
       $scope.account = account_info.data.account;
-      console.log("Account info: ", $scope.account);
+      $scope.account_contacts = account_info.data.account_contacts;
+      console.log("\nThe account: ", $scope.account);
+      console.log("\nThe contacts: ", $scope.account_contacts);
     })
     .catch(function(error) {
       console.log("There was an error!!!", error);
     });
+
+  $scope.searchContacts = function(event) {
+    console.log("Event is: ", event);
+    if (event.keyCode === 8) {
+      console.log('here!');
+      console.log("This is the event: ", event);
+      $scope.contacts = "";
+    } else if (event.keyCode === 16) {
+      console.log("This is the event: ", event);
+    } else {
+      CRM_Factory.searchContacts($scope.account.contacts_search)
+        .then(function(contacts) {
+          console.log("Here are the contacts: ", contacts);
+          $scope.contacts = contacts.data.results;
+        })
+        .catch(function(error) {
+          console.log("There was an error!!!", error);
+        });
+    }
+  };
+
+  $scope.addContactToAccount = function(contactID, accountID) {
+    console.log("Here's ID of the contact you clicked: ", contactID);
+    console.log("Here's the ID of the account you are viewing: ", accountID);
+    CRM_Factory.addContactToAccount(contactID, accountID)
+      .then(function(updated_information) {
+        console.log("Here's the updated_information", updated_information);
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error);
+      });
+
+  };
 });
 
 //////////// CONTACT-SPECIFIC CONTROLLERS ///////////
