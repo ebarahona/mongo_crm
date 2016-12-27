@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <div class="container">
   <div class="row">
-    <h4><a ui-sref="contacts">Contacts </a>&gt;&gt; {{ contact.first_name }} {{ contact.last_name }} - {{ contact._id }}</h4>
+    <h4><a ui-sref="contacts">Contacts </a>&gt;&gt; {{ contact.first_name }} {{ contact.last_name }}</h4>
 
     <hr>
   </div>
@@ -78,7 +78,7 @@
         <div class="form-group">
           <label for="accounts_search" class="col-lg-2 control-label">Accounts Search</label>
           <div class="col-lg-8">
-            <input ng-model="contact.accounts_search" ng-keydown="searchAccounts($event)" name="accounts_search" type="text" class="form-control" id="accounts_search" placeholder="Accounts search">
+            <input ng-model="contact.accounts_search" ng-keydown="searchAccounts($event)" name="accounts_search" type="text" class="form-control" id="accounts_search" placeholder="Accounts Search">
           </div>
         </div>
         <table class="table table-responsive table-hover">

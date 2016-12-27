@@ -292,6 +292,10 @@ app.controller("AccountsController", function($scope, $rootScope, $state, CRM_Fa
 app.controller("ViewAccountController", function($scope, $stateParams, CRM_Factory) {
   console.log("I'm in the ViewAccountController");
   console.log("stateParams", $stateParams);
+
+  // Scroll to top when loading page (need this when coming from a contact)
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+
   var account_id = $stateParams.accountID;
   CRM_Factory.viewAccount(account_id)
     .then(function(account_info) {
@@ -377,6 +381,10 @@ app.controller("ContactsController", function($scope, $rootScope, $state, CRM_Fa
 app.controller("ViewContactController", function($scope, $stateParams, CRM_Factory) {
   console.log("I'm inside the ViewContactController");
   console.log("stateParams", $stateParams);
+
+  // Scroll to top when loading page (need this when coming from an account)
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+
   var contact_id = $stateParams.contactID;
 
   CRM_Factory.viewContact(contact_id)
