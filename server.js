@@ -396,7 +396,7 @@ app.get("/accounts", function(request, response) {
     });
 });
 
-// ----------- Show An Account --------- //
+// ------------ Show Account ---------- //
 app.get("/account/view/:accountID", function(request, response) {
   let accountID = request.params.accountID;
   console.log("I'm in the backend", accountID);
@@ -552,6 +552,42 @@ app.get("/search_contacts/:searchTerm", function (request, response) {
       console.log("There was an error");
     });
 });
+
+// ------------- Show Contact ----------- //
+app.get("/contact/view/:contactID", function(request, response) {
+  let contactID = request.params.contactID;
+  console.log("I'm in the backend", contactID);
+  Contact.findById(contactID)
+  .then(function(contact) {
+    console.log("This is the contact: ", contact);
+    let contact_account_IDs = contact.account;
+    console.log("Here are the account IDs: ", contact_account_IDs);
+
+    return Account.find({
+      _id: {
+        $in: contact_account_IDs
+      }
+    })
+      .then(function(accounts) {
+        console.log("\nHere is the contact: ", contact);
+        console.log("\nHere are the accounts: ", accounts);
+        response.json({
+          contact: contact,
+          contact_accounts: accounts
+        });
+      })
+      .catch(function(error) {
+        response.status(400);
+        console.log("There was an error looking for the information: ", error.stack);
+      });
+  })
+  .catch(function(error) {
+    response.status(400);
+    console.log("There was an error looking for that account: ", error.stack);
+  });
+});
+
+
 
 
 

@@ -143,10 +143,10 @@
           <div class="col-lg-8">
             <!-- {{ account_contacts }} -->
             <span ng-repeat="account_contact in account_contacts">
-              <a href="#">{{ account_contact.first_name }} {{ account_contact.last_name }}</a>, 
+              <a ui-sref="view_contact({contactID: account_contact._id})">{{ account_contact.first_name }} {{ account_contact.last_name }}</a>,
             </span>
-            <input ng-model="account.account_contacts" name="contacts" type="text" class="form-control" id="contacts" placeholder="Contacts">
-        </div>
+            <!-- <input ng-model="account.account_contacts" name="contacts" type="text" class="form-control" id="contacts" placeholder="Contacts"> -->
+          </div>
         </div>
         <div class="form-group">
           <label for="description" class="col-lg-2 control-label">Description</label>

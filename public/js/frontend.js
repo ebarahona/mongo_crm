@@ -89,7 +89,7 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
-  // View an account
+  // View account
   service.viewAccount = function(accountID) {
     console.log("I'm in the factory and I got this: ", accountID);
     return $http({
@@ -145,6 +145,15 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     return $http({
       method: "GET",
       url: "/search_contacts/" + searchTerm
+    });
+  };
+
+  // View contact
+  service.viewContact = function(contactID) {
+    console.log("I'm in the factory and I got this: ", contactID);
+    return $http({
+      method: "GET",
+      url: "/contact/view/" + contactID,
     });
   };
 
@@ -306,7 +315,6 @@ app.controller("ViewAccountController", function($scope, $stateParams, CRM_Facto
       .catch(function(error) {
         console.log("There was an error!!!", error);
       });
-
   };
 });
 
@@ -345,6 +353,24 @@ app.controller("ContactsController", function($scope, $rootScope, $state, CRM_Fa
     .catch(function(error) {
       console.log("There was an error!!!", error);
     });
+});
+
+app.controller("ViewContactController", function($scope, $stateParams, CRM_Factory) {
+  console.log("I'm inside the ViewContactController");
+  console.log("stateParams", $stateParams);
+  var contact_id = $stateParams.contactID;
+
+  CRM_Factory.viewContact(contact_id)
+  .then(function(contact_info) {
+    console.log("\n\nThis is the contact_info: ", contact_info);
+    $scope.contact = contact_info.data.contact;
+    $scope.contact_accounts = contact_info.data.contact_accounts;
+    console.log("\nThe contact: ", $scope.contact);
+    console.log("\nThe accounts: ", $scope.contact_accounts);
+  })
+  .catch(function(error) {
+    console.log("There was an error!!!", error);
+  });
 });
 
 
@@ -407,6 +433,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Contact/create",
     templateUrl: "views/create_contact.html",
     controller: "CreateContactController"
+  })
+  .state({
+    name: "view_contact",
+    url: "/Contact/view/{contactID}",
+    templateUrl: "views/view_contact.html",
+    controller: "ViewContactController"
   });
 
   $urlRouterProvider.otherwise("/");
