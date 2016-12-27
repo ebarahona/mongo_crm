@@ -396,6 +396,28 @@ app.get("/accounts", function(request, response) {
     });
 });
 
+// ---------- Search Accounts --------- //
+app.get("/search_accounts/:searchTerm", function (request, response) {
+  let searchTerm = request.params.searchTerm;
+  let search = "/" + searchTerm + ".*/i"
+
+  console.log("This is the term passed from the front end", searchTerm);
+  console.log("This is the search", search);
+
+  Account.find({
+    name: eval(search)
+  })
+    .then(function(results) {
+      console.log("There are the search results", results);
+      response.json({
+        results: results
+      })
+    })
+    .catch(function(error) {
+      console.log("There was an error");
+    });
+});
+
 // ------------ Show Account ---------- //
 app.get("/account/view/:accountID", function(request, response) {
   let accountID = request.params.accountID;
@@ -537,8 +559,6 @@ app.get("/search_contacts/:searchTerm", function (request, response) {
   console.log("This is the term passed from the front end", searchTerm);
   console.log("This is the search", search);
 
-  // (first_name: new RegExp(searchTerm));
-
   Contact.find({
     first_name: eval(search)
   })
@@ -585,6 +605,48 @@ app.get("/contact/view/:contactID", function(request, response) {
     response.status(400);
     console.log("There was an error looking for that account: ", error.stack);
   });
+});
+
+// --------- Add Account to Contact -------- //
+app.post("/contact/add_account", function(request, response) {
+  console.log("Body received: ", request.body);
+  let accountID = request.body.account_id;
+  let contactID = request.body.contact_id;
+  let queryAccount = { _id: accountID };
+  let queryContact = { _id: contactID };
+
+  console.log("\n\nAccount ID: ", accountID);
+  console.log("\n\nContact ID: ", contactID);
+  console.log("\n\n");
+
+  return bluebird.all([
+    Account.findOneAndUpdate(queryAccount,
+      {
+        $addToSet: {
+          contacts: contactID
+        }
+      }
+    )
+  ]),
+  Contact.findOneAndUpdate(queryContact,
+    {
+      $addToSet: {
+        account: accountID
+      }
+    }
+  )
+    .then(function(contact, account) {
+      console.log("\n\nContact updated: ", contact);
+      console.log("\n\nAccount updated: ", account);
+      response.json({
+        contact: contact,
+        account: account
+      });
+    })
+    .catch(function(error) {
+      response.status(500);
+      console.log("There was an error updating the account: ", error.stack);
+    });
 });
 
 
