@@ -89,12 +89,34 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
-  // View an accounts
+  // View account
   service.viewAccount = function(accountID) {
     console.log("I'm in the factory and I got this: ", accountID);
     return $http({
       method: "GET",
       url: "/account/view/" + accountID,
+    });
+  };
+
+  // Search accounts
+  service.searchAccounts = function(searchTerm) {
+    console.log("Term being searched in the factory is: ", searchTerm);
+    return $http({
+      method: "GET",
+      url: "/search_accounts/" + searchTerm
+    });
+  };
+
+  // Add contact to account
+  service.addContactToAccount = function(contactID, accountID) {
+    console.log("In the factory.  Here are the IDs sent from the view account page: ", contactID, accountID);
+    return $http({
+      method: "POST",
+      url: "/account/add_contact",
+      data: {
+        contact_id: contactID,
+        account_id: accountID
+      }
     });
   };
 
@@ -126,7 +148,36 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
+  // View contact
+  service.viewContact = function(contactID) {
+    console.log("I'm in the factory and I got this: ", contactID);
+    return $http({
+      method: "GET",
+      url: "/contact/view/" + contactID,
+    });
+  };
 
+  // Search contacts
+  service.searchContacts = function(searchTerm) {
+    console.log("Term being searched in the factory is: ", searchTerm);
+    return $http({
+      method: "GET",
+      url: "/search_contacts/" + searchTerm
+    });
+  };
+
+// Add account to contact
+service.addAccountToContact = function(accountID, contactID) {
+  console.log("In the factory.  Here are the IDs sent from the view contact page: ", accountID, contactID);
+  return $http({
+    method: "POST",
+    url: "/contact/add_account",
+    data: {
+      account_id: accountID,
+      contact_id: contactID
+    }
+  });
+};
 
 
 
@@ -241,15 +292,53 @@ app.controller("AccountsController", function($scope, $rootScope, $state, CRM_Fa
 app.controller("ViewAccountController", function($scope, $stateParams, CRM_Factory) {
   console.log("I'm in the ViewAccountController");
   console.log("stateParams", $stateParams);
-  let account_id = $stateParams.accountID;
+
+  // Scroll to top when loading page (need this when coming from a contact)
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+  var account_id = $stateParams.accountID;
   CRM_Factory.viewAccount(account_id)
     .then(function(account_info) {
+      console.log("\n\nThis is the account_info: ", account_info);
       $scope.account = account_info.data.account;
-      console.log("Account info: ", $scope.account);
+      $scope.account_contacts = account_info.data.account_contacts;
+      console.log("\nThe account: ", $scope.account);
+      console.log("\nThe contacts: ", $scope.account_contacts);
     })
     .catch(function(error) {
       console.log("There was an error!!!", error);
     });
+
+  $scope.searchContacts = function(event) {
+    console.log("Event is: ", event);
+    if (event.keyCode === 8) {
+      console.log("This is the event: ", event);
+      $scope.contacts = "";
+    } else if (event.keyCode === 16) {
+      console.log("This is the event: ", event);
+    } else {
+      CRM_Factory.searchContacts($scope.account.contacts_search)
+        .then(function(contacts) {
+          console.log("Here are the contacts: ", contacts);
+          $scope.contacts = contacts.data.results;
+        })
+        .catch(function(error) {
+          console.log("There was an error!!!", error);
+        });
+    }
+  };
+
+  $scope.addContactToAccount = function(contactID, accountID) {
+    console.log("Here's ID of the contact you clicked: ", contactID);
+    console.log("Here's the ID of the account you are viewing: ", accountID);
+    CRM_Factory.addContactToAccount(contactID, accountID)
+      .then(function(updated_information) {
+        console.log("Here's the updated_information", updated_information);
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error);
+      });
+  };
 });
 
 //////////// CONTACT-SPECIFIC CONTROLLERS ///////////
@@ -287,6 +376,60 @@ app.controller("ContactsController", function($scope, $rootScope, $state, CRM_Fa
     .catch(function(error) {
       console.log("There was an error!!!", error);
     });
+});
+
+app.controller("ViewContactController", function($scope, $stateParams, CRM_Factory) {
+  console.log("I'm inside the ViewContactController");
+  console.log("stateParams", $stateParams);
+
+  // Scroll to top when loading page (need this when coming from an account)
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+  var contact_id = $stateParams.contactID;
+
+  CRM_Factory.viewContact(contact_id)
+  .then(function(contact_info) {
+    console.log("\n\nThis is the contact_info: ", contact_info);
+    $scope.contact = contact_info.data.contact;
+    $scope.contact_accounts = contact_info.data.contact_accounts;
+    console.log("\nThe contact: ", $scope.contact);
+    console.log("\nThe accounts: ", $scope.contact_accounts);
+  })
+  .catch(function(error) {
+    console.log("There was an error!!!", error);
+  });
+
+  $scope.searchAccounts = function(event) {
+    console.log("Event is: ", event);
+    if (event.keyCode === 8) {
+      console.log("This is the event.keyCode 8: ", event);
+      $scope.accounts = "";
+    } else if (event.keyCode === 16) {
+      console.log("This is the event.keyCode 16: ", event);
+    } else {
+      console.log("$scope.contact.accounts_search", $scope.contact.accounts_search);
+      CRM_Factory.searchAccounts($scope.contact.accounts_search)
+        .then(function(accounts) {
+          console.log("Here are the accounts: ", accounts);
+          $scope.accounts = accounts.data.results;
+        })
+        .catch(function(error) {
+          console.log("There was an error!!!", error);
+        });
+    }
+  };
+
+  $scope.addAccountToContact = function(accountID, contactID) {
+    console.log("Here's ID of the account you clicked: ", accountID);
+    console.log("Here's the ID of the contact you are viewing: ", contactID);
+    CRM_Factory.addAccountToContact(accountID, contactID)
+      .then(function(updated_information) {
+        console.log("Here's the updated_information", updated_information);
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error);
+      });
+  };
 });
 
 
@@ -349,6 +492,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Contact/create",
     templateUrl: "views/create_contact.html",
     controller: "CreateContactController"
+  })
+  .state({
+    name: "view_contact",
+    url: "/Contact/view/{contactID}",
+    templateUrl: "views/view_contact.html",
+    controller: "ViewContactController"
   });
 
   $urlRouterProvider.otherwise("/");

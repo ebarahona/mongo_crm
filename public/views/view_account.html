@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <div class="container">
   <div class="row">
-    <h4><a ui-sref="accounts">Accounts </a>&gt;&gt; Account Name Here! {{ account.name }}</h4>
-    <!-- Not in place yet -->
-    <!-- <button ng-click="saveAccount()" class="btn btn-primary btn-sm" type="button" name="button">Edit</button> -->
+    <h4><a ui-sref="accounts">Accounts </a>&gt;&gt; {{ account.name }}</h4>
+
     <hr>
   </div>
   <div class="row">
@@ -93,7 +92,7 @@
               <option>Engineering</option>
               <option>Entertainment</option>
               <option>Environmental</option>
-              <option>Food & Beverage</option>
+              <option>Food &amp; Beverage</option>
               <option>Government</option>
               <option>Hospitality</option>
               <option>Insurance</option>
@@ -112,16 +111,35 @@
             </select>
           </div>
         </div>
+
         <div class="form-group">
-          <label for="account" class="col-lg-2 control-label">Contacts</label>
+          <label for="contacts_search" class="col-lg-2 control-label">Contacts Search</label>
           <div class="col-lg-8">
-            <input ng-model="account.contacts" name="contacts" type="text" class="form-control" id="contacts" placeholder="Contacts">
+            <input ng-model="account.contacts_search" ng-keydown="searchContacts($event)" name="contacts_search" type="text" class="form-control" id="contacts_search" placeholder="Contacts Search">
+          </div>
+        </div>
+
+        <table class="table table-responsive table-hover ">
+          <tbody>
+            <tr ng-repeat="contact in contacts">
+              <td ng-click="addContactToAccount(contact._id, account._id)">{{ contact.first_name }} {{ contact.last_name }} - {{ contact._id }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="form-group">
+          <label for="contacts" class="col-lg-2 control-label">Contacts</label>
+          <div class="col-lg-8">
+            <!-- {{ account_contacts }} -->
+            <span ng-repeat="account_contact in account_contacts">
+              <a ui-sref="view_contact({contactID: account_contact._id})">{{ account_contact.first_name }} {{ account_contact.last_name }}</a>,
+            </span>
           </div>
         </div>
         <div class="form-group">
           <label for="description" class="col-lg-2 control-label">Description</label>
           <div class="col-lg-8">
-            <input ng-model="account.description" name="description" type="text" class="form-control" id="description" placeholder="Description">
+            <textarea ng-model="account.description" name="description" id="description" rows="8" cols="80" placeholder="Description"></textarea>
           </div>
         </div>
 

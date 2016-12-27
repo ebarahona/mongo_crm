@@ -129,15 +129,15 @@ const Account = mongoose.model("Account", {
     type: String
   },
   contacts: [{
-    name: String,
-    _id: mongoose.Schema.Types.ObjectId
-  }],                // Not currently working!!!
+    type: mongoose.Schema.Types.ObjectId
+  }],
   ownerID: {
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
   created_at: {
     type: Date,
+    // default: Date.now,      // Not currenty used.  This is currently being done before save
     required: true
   },
   created_by_ID: {
@@ -198,8 +198,7 @@ const Contact = mongoose.model("Contact", {
     type: String
   },
   account: [{
-    name: String,
-    _id: mongoose.Schema.Types.ObjectId
+    type: mongoose.Schema.Types.ObjectId
   }],
   ownerID: {
     type: mongoose.Schema.Types.ObjectId,
@@ -397,20 +396,100 @@ app.get("/accounts", function(request, response) {
     });
 });
 
-// ----------- Show An Account --------- //
+// ---------- Search Accounts --------- //
+app.get("/search_accounts/:searchTerm", function (request, response) {
+  let searchTerm = request.params.searchTerm;
+  let search = "/" + searchTerm + ".*/i"
+
+  console.log("This is the term passed from the front end", searchTerm);
+  console.log("This is the search", search);
+
+  Account.find({
+    name: eval(search)
+  })
+    .then(function(results) {
+      console.log("There are the search results", results);
+      response.json({
+        results: results
+      })
+    })
+    .catch(function(error) {
+      console.log("There was an error");
+    });
+});
+
+// ------------ Show Account ---------- //
 app.get("/account/view/:accountID", function(request, response) {
   let accountID = request.params.accountID;
   console.log("I'm in the backend", accountID);
   Account.findById(accountID)
     .then(function(account) {
-      console.log("Account: ", account);
-      response.json({
-        account: account
+      let account_contact_IDs = account.contacts;
+      // console.log("Here are the contacts: ", account_contact_IDs);
+      // console.log("\n\nAccount: ", account);
+
+      return Contact.find({
+        _id: {
+          $in: account_contact_IDs
+        }
       })
+        .then(function(contacts) {
+          console.log("\nHere are the contacts: ", contacts);
+          console.log("\nHere is the account: ", account);
+          response.json({
+            account: account,
+            account_contacts: contacts
+          });
+        })
+        .catch(function(error) {
+          response.status(400);
+          console.log("There was an error looking for the information: ", error.stack);
+        });
     })
     .catch(function(error) {
       response.status(400);
       console.log("There was an error looking for that account: ", error.stack);
+    });
+});
+
+// --------- Add Contact to Account -------- //
+app.post("/account/add_contact", function(request, response) {
+  let contactID = request.body.contact_id;
+  let accountID = request.body.account_id;
+  let queryContact = { _id: contactID };
+  let queryAccount = { _id: accountID };
+
+  console.log("\n\nContact ID: ", contactID);
+  console.log("\n\nAccount ID: ", accountID);
+  console.log("\n\n");
+
+  return bluebird.all([
+    Account.findOneAndUpdate(queryAccount,
+      {
+        $addToSet: {
+          contacts: contactID
+        }
+      }
+    ),
+    Contact.findOneAndUpdate(queryContact,
+      {
+        $addToSet: {
+          account: accountID
+        }
+      }
+    )
+  ])
+    .then(function(contact, account) {
+      console.log("\n\nContact updated: ", contact);
+      console.log("\n\nAccount updated: ", account);
+      response.json({
+        account: account,
+        contact: contact
+      });
+    })
+    .catch(function(error) {
+      response.status(500);
+      console.log("There was an error updating the account: ", error.stack);
     });
 });
 
@@ -471,6 +550,105 @@ app.get("/contacts", function(request, response) {
       });
     });
 });
+
+// ---------- Search Contacts --------- //
+app.get("/search_contacts/:searchTerm", function (request, response) {
+  let searchTerm = request.params.searchTerm;
+  let search = "/" + searchTerm + ".*/i"
+
+  console.log("This is the term passed from the front end", searchTerm);
+  console.log("This is the search", search);
+
+  Contact.find({
+    first_name: eval(search)
+  })
+    .then(function(results) {
+      console.log("There are the search results", results);
+      response.json({
+        results: results
+      })
+    })
+    .catch(function(error) {
+      console.log("There was an error");
+    });
+});
+
+// ------------- Show Contact ----------- //
+app.get("/contact/view/:contactID", function(request, response) {
+  let contactID = request.params.contactID;
+  console.log("I'm in the backend", contactID);
+  Contact.findById(contactID)
+  .then(function(contact) {
+    console.log("This is the contact: ", contact);
+    let contact_account_IDs = contact.account;
+    console.log("Here are the account IDs: ", contact_account_IDs);
+
+    return Account.find({
+      _id: {
+        $in: contact_account_IDs
+      }
+    })
+      .then(function(accounts) {
+        console.log("\nHere is the contact: ", contact);
+        console.log("\nHere are the accounts: ", accounts);
+        response.json({
+          contact: contact,
+          contact_accounts: accounts
+        });
+      })
+      .catch(function(error) {
+        response.status(400);
+        console.log("There was an error looking for the information: ", error.stack);
+      });
+  })
+  .catch(function(error) {
+    response.status(400);
+    console.log("There was an error looking for that account: ", error.stack);
+  });
+});
+
+// --------- Add Account to Contact -------- //
+app.post("/contact/add_account", function(request, response) {
+  console.log("Body received: ", request.body);
+  let accountID = request.body.account_id;
+  let contactID = request.body.contact_id;
+  let queryAccount = { _id: accountID };
+  let queryContact = { _id: contactID };
+
+  console.log("\n\nAccount ID: ", accountID);
+  console.log("\n\nContact ID: ", contactID);
+  console.log("\n\n");
+
+  return bluebird.all([
+    Account.findOneAndUpdate(queryAccount,
+      {
+        $addToSet: {
+          contacts: contactID
+        }
+      }
+    )
+  ]),
+  Contact.findOneAndUpdate(queryContact,
+    {
+      $addToSet: {
+        account: accountID
+      }
+    }
+  )
+    .then(function(contact, account) {
+      console.log("\n\nContact updated: ", contact);
+      console.log("\n\nAccount updated: ", account);
+      response.json({
+        contact: contact,
+        account: account
+      });
+    })
+    .catch(function(error) {
+      response.status(500);
+      console.log("There was an error updating the account: ", error.stack);
+    });
+});
+
 
 
 
