@@ -85,7 +85,15 @@
         <div class="form-group">
           <label for="description" class="col-lg-2 control-label">Description</label>
           <div class="col-lg-8">
-            <input ng-model="contact.description" name="description" type="text" class="form-control" id="description" placeholder="Description">
+            <textarea ng-model="contact.description"
+                      name="description"
+                      type="text"
+                      class="form-control"
+                      id="description"
+                      placeholder="Description"
+                      rows="8"
+                      cols="80">
+            </textarea>
           </div>
         </div>
 

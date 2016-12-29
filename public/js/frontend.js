@@ -253,7 +253,7 @@ app.controller("HomeController", function($scope, $state, CRM_Factory) {
 //////////// USER-SPECIFIC CONTROLLERS ///////////
 app.controller("RegisterController", function($scope, $state, CRM_Factory) {
   // console.log("I'm using the RegisterController");
-  // $scope.user = "";
+  $scope.user = {};
   $scope.register = function() {
     var user_registration = $scope.user;
     delete user_registration.password2;
