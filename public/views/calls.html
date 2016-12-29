@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-8">
+
+    </div>
+    <div class="col-sm-4">
+      <button ng-click="createCall()" class="btn btn-success btn-sm pull-right" type="button" name="button">Create Call</button>
+    </div>
+  </div>
+  <div class="row">
+
+  </div>
+  <div class="row">
+    <table class="table table-responsive table-striped table-hover ">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Linked To</th>
+        <th>Status</th>
+        <th>Start Date</th>
+        <th>Assigned User</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="call in calls | orderBy:sortType:sortReverse">
+        <td><a ui-sref="view_call({callID: call._id})">{{ call.name }}</a></td>
+        <td>{{ call.linked_to.name }}</td>
+        <td>{{ call.status }}</td>
+        <td>{{ call.start_date | date:'medium' }}</td>
+        <td>{{ call.ownerID }}</td>
+      </tr>
+    </tbody>
+    </table>
+  </div>
+</div>

@@ -214,7 +214,64 @@ const Contact = mongoose.model("Contact", {
   },
 });
 
-
+/////////////////// CALLS MODEL /////////////////////
+const Call = mongoose.model("Call", {
+  name: {
+    type: String,
+    required: true
+  },
+  linked_to: {
+    selected: String,
+    name: String
+  },
+  status: {
+    type: String,
+    required: true
+  },
+  direction: {
+    type: String
+  },
+  start_date: {
+    type: Date
+  },
+  end_date: {
+    type: Date
+  },
+  duration: {
+    type: Number
+  },
+  description: {
+    type: String
+  },
+  ownerID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  attendee_users: [{
+    type: mongoose.Schema.Types.ObjectId
+  }],
+  attendee_contacts: [{
+    type: mongoose.Schema.Types.ObjectId
+  }],
+  attendee_leads: [{
+    type: mongoose.Schema.Types.ObjectId
+  }],
+  created_at: {
+    type: Date,
+    required: true
+  },
+  created_by_ID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  updated_at: {
+    type: Date,
+    default: Date.now
+  },
+  updated_by_ID: {
+    type: mongoose.Schema.Types.ObjectId
+  }
+});
 
 
 
@@ -370,7 +427,6 @@ app.post("/accounts/create", function(request, response) {
     })
     .catch(function(error) {
       response.status(400);
-      console.log("Didn't create account because: ", error.stack);
       console.log("\n\n\n");
       console.log("Didn't create account because: ", error);
     });
@@ -649,6 +705,143 @@ app.post("/contact/add_account", function(request, response) {
     });
 });
 
+
+////////////// CALL ROUTES //////////////
+// ---------- Search Parent --------- //
+// Used to link calls, meetings, tasks, etc //
+app.get("/search_parent/:parent/:searchTerm", function (request, response) {
+  let parent = request.params.parent;
+  let searchTerm = request.params.searchTerm;
+  search = "/" + searchTerm + ".*/i"
+  console.log("\n\nParent: ", parent);
+  console.log("\n\nSearch: ", search);
+
+  if (parent === "Account") {
+    Account.find({
+      name: eval(search)
+    })
+      .then(function(results) {
+        console.log("There are the search results", results);
+        var type = "Account";
+        response.json({
+          type: type,
+          results: results
+        })
+      })
+      .catch(function(error) {
+        console.log("There was an error");
+      });
+  } else if (parent === "Contact") {
+    Contact.find({
+      first_name: eval(search)
+    })
+      .then(function(results) {
+        console.log("There are the search results", results);
+        var type = "Contact";
+        response.json({
+          type: type,
+          results: results
+        })
+      })
+      .catch(function(error) {
+        console.log("There was an error");
+      });
+  } else {
+    console.log("Need to update this part later!");
+  }
+});
+
+// ----------- Create Call ---------- //
+app.post("/calls/create", function(request, response) {
+  let user_id = request.body.user_id;
+  console.log("This is the request sent from the front end: ", request.body);
+
+  let newCall = new Call({
+    name: request.body.call_info.name,
+    linked_to: {
+      selected: request.body.call_info.selected_parent,
+      name: request.body.call_info.chosen_result,
+    },
+    status: request.body.call_info.selected_status,
+    direction: request.body.call_info.direction,
+    start_date: request.body.call_info.start_date,
+    end_date: request.body.call_info.end_date,
+    duration: request.body.call_info.duration,
+    description: request.body.call_info.description,
+    ownerID: user_id,
+    created_at: new Date(),
+    created_by_ID: user_id
+  });
+
+  newCall.save()
+    .then(function(result) {
+      console.log("Call created successfully: ", result);
+      response.json({
+        message: "Call created successfully"
+      });
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("\n\n\n");
+      console.log("Didn't create account because: ", error);
+    });
+});
+
+// ----------- Show All Calls --------- //
+app.get("/calls", function(request, response) {
+  console.log("I'm in the backend and want to show you all my calls");
+  Call.find()
+    .then(function(calls) {
+      console.log("\nHere are my calls: \n", calls);
+      response.json({
+        calls: calls
+      });
+    })
+    .catch(function(error) {
+      console.log("There was an error getting the calls");
+      response.status(401) ;
+      response.json({
+        message: "There was an error getting the calls"
+      });
+    });
+});
+
+// -------------- Show Call ------------ //
+app.get("/call/view/:callID", function(request, response) {
+  let callID = request.params.callID;
+  console.log("I'm in the backend", callID);
+  Call.findById(callID)
+  .then(function(call) {
+    console.log("This is the call: ", call);
+    response.json({
+      call: call
+    })
+  //   let call_account_IDs = call.account;
+  //   console.log("Here are the account IDs: ", call_account_IDs);
+  //
+  //   return Account.find({
+  //     _id: {
+  //       $in: call_account_IDs
+  //     }
+  //   })
+  //     .then(function(accounts) {
+  //       console.log("\nHere is the call: ", call);
+  //       console.log("\nHere are the accounts: ", accounts);
+  //       response.json({
+  //         call: call,
+  //         contact_accounts: accounts
+  //       });
+  //     })
+  //     .catch(function(error) {
+  //       response.status(400);
+  //       console.log("There was an error looking for the information: ", error.stack);
+  //     });
+  })
+  .catch(function(error) {
+    response.status(400);
+    console.log("There was an error looking for that account: ", error.stack);
+  });
+});
 
 
 

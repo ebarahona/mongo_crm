@@ -180,6 +180,60 @@ service.addAccountToContact = function(accountID, contactID) {
 };
 
 
+////////////////////////////////////////////////////////////
+///////////////////// CALL SERVICES /////////////////////
+////////////////////////////////////////////////////////////
+
+// Create call
+service.createCall = function(callInfo) {
+  var user_id = $rootScope.user._id;
+  console.log("ID of the user that clicked the save contact button: ", user_id);
+  console.log("Call info: ", callInfo);
+  return $http({
+    method: "POST",
+    url: "/calls/create",
+    data: {
+      user_id: user_id,
+      call_info: callInfo
+    }
+  });
+};
+
+// Show all calls
+service.showCalls = function() {
+  console.log("I'm in the factory");
+  return $http({
+    method: "GET",
+    url: "/calls"
+  });
+};
+
+// View call
+service.viewCall = function(callID) {
+  console.log("I'm in the factory and I got this: ", callID);
+  return $http({
+    method: "GET",
+    url: "/call/view/" + callID,
+  });
+};
+
+
+
+////////////////////////////////////////////////////////////
+///////////////////// GENERAL SERVICES /////////////////////
+////////////////////////////////////////////////////////////
+service.searchParent = function(searchInfo) {
+  var parent = searchInfo.selected_parent;
+  var searchTerm = searchInfo.linked_to_search;
+  var url = "/search_parent/" + parent + "/" + searchTerm;
+
+  return $http({
+    method: "GET",
+    url: url
+  });
+};
+
+
 
 
   return service;
@@ -190,7 +244,7 @@ service.addAccountToContact = function(accountID, contactID) {
 ///////////////////// CONTROLLERS /////////////////////
 ///////////////////////////////////////////////////////
 
-///////////////////// HOME CONTROLLER ////////////////////
+///////////////// HOME CONTROLLER /////////////////
 app.controller("HomeController", function($scope, $state, CRM_Factory) {
   console.log("I'm using the HomeController");
 });
@@ -269,9 +323,6 @@ app.controller("CreateAccountController", function($scope, $state, CRM_Factory) 
 
 app.controller("AccountsController", function($scope, $rootScope, $state, CRM_Factory) {
   console.log("I'm using the AccountsController.  Yay!");
-
-  // $scope.sortType = "name"; // set the default sort type
-  // $scope.sortReverse = false;  // set the default sort order
 
   $scope.createAccount = function() {
     console.log("Clicked the createAccount button");
@@ -432,6 +483,156 @@ app.controller("ViewContactController", function($scope, $stateParams, CRM_Facto
   };
 });
 
+//////////// CALL-SPECIFIC CONTROLLERS ///////////
+app.controller("CallsController", function($scope, $state, CRM_Factory) {
+  console.log("I'm using the CallsController.  Yay!");
+
+  $scope.createCall = function() {
+    console.log("Clicked the createCall button");
+    $state.go("create_call");
+  };
+
+  CRM_Factory.showCalls()
+    .then(function(calls) {
+      $scope.calls = calls.data.calls;
+      console.log("Calls from backend:",  $scope.calls);
+      // $state.go("calls");
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
+});
+
+app.controller("CreateCallController", function($scope, $state, CRM_Factory) {
+  // $scope.call.selected_parent = "";
+  $scope.call_parents = ["Account", "Contact",
+      "Lead", "Opportunity"];
+  $scope.call_statuses = ["Planned", "Held", "Not Held"];
+
+  $scope.searchParent = function(event) {
+    console.log("Event is: ", event);
+    if (event.keyCode === 8) {
+      // console.log("This is the event.keyCode 8: ", event);
+      $scope.results = "";
+    } else if (event.keyCode === 16) {
+      // console.log("This is the event.keyCode 16: ", event);
+    } else {
+      var selected_parent = $scope.call.selected_parent;
+      var linked_to_search = $scope.call.linked_to_search;
+      var searchInfo = {
+        selected_parent: selected_parent,
+        linked_to_search: linked_to_search
+      };
+      console.log("searchInfo: ", searchInfo);
+      CRM_Factory.searchParent(searchInfo)
+        .then(function(response) {
+          console.log("Here is the response: ", response);
+          var type = response.data.type;
+          console.log("This is the type: ", type);
+          $scope.results = response.data.results;
+          console.log("These are the results: ", $scope.results);
+        })
+        .catch(function(error) {
+          console.log("There was an error!!!", error);
+        });
+    }
+  };
+
+  $scope.addResult = function(resultID, resultName, resultFirstName, resultLastName) {
+    console.log("Clicked the chosen result: ", resultID, resultName, resultFirstName, resultLastName);
+    // Clear out search area
+    $scope.call.linked_to_search = "";
+    // Clear out the results
+    $scope.results = "";
+    $scope.resultID = resultID;
+    if (resultName) {
+      console.log("I have an account");
+      $scope.call.chosen_result = resultName;
+      console.log($scope.call.chosen_result);
+    } else {
+      console.log("I don't have an account");
+      var first_name = resultFirstName;
+      var last_name = resultLastName;
+      $scope.call.chosen_result = first_name + " " + last_name;
+    }
+  };
+
+  $scope.clearFields = function() {
+    console.log("I'm clearing the fields");
+    $scope.call.linked_to_search = "";
+    // $scope.results = "";
+    $scope.call.chosen_result = "";
+  };
+
+  $scope.saveCall = function() {
+    console.log("Clicked the save button");
+    var call_information = $scope.call;
+    console.log("Here is the call_information: ", call_information);
+    CRM_Factory.createCall(call_information)
+      .then(function(success) {
+        console.log("We were successful: ", success);
+        $state.go("calls");
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+});
+
+app.controller("ViewCallController", function($scope, $stateParams, CRM_Factory) {
+  console.log("I'm inside the ViewCallController");
+  console.log("stateParams", $stateParams);
+
+  // Scroll to top when loading page (need this when coming from an account)
+  // document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+  var call_id = $stateParams.callID;
+
+  CRM_Factory.viewCall(call_id)
+  .then(function(call_info) {
+    console.log("\n\nThis is the call_info: ", call_info);
+    $scope.call = call_info.data.call;
+    // $scope.call_accounts = call_info.data.call_accounts;
+    console.log("\nThe call: ", $scope.call);
+    // console.log("\nThe accounts: ", $scope.call_accounts);
+  })
+  .catch(function(error) {
+    console.log("There was an error!!!", error);
+  });
+
+  // $scope.searchAccounts = function(event) {
+  //   console.log("Event is: ", event);
+  //   if (event.keyCode === 8) {
+  //     console.log("This is the event.keyCode 8: ", event);
+  //     $scope.accounts = "";
+  //   } else if (event.keyCode === 16) {
+  //     console.log("This is the event.keyCode 16: ", event);
+  //   } else {
+  //     console.log("$scope.call.accounts_search", $scope.call.accounts_search);
+  //     CRM_Factory.searchAccounts($scope.call.accounts_search)
+  //       .then(function(accounts) {
+  //         console.log("Here are the accounts: ", accounts);
+  //         $scope.accounts = accounts.data.results;
+  //       })
+  //       .catch(function(error) {
+  //         console.log("There was an error!!!", error);
+  //       });
+  //   }
+  // };
+  //
+  // $scope.addAccountToContact = function(accountID, callID) {
+  //   console.log("Here's ID of the account you clicked: ", accountID);
+  //   console.log("Here's the ID of the call you are viewing: ", callID);
+  //   CRM_Factory.addAccountToContact(accountID, callID)
+  //     .then(function(updated_information) {
+  //       console.log("Here's the updated_information", updated_information);
+  //     })
+  //     .catch(function(error) {
+  //       console.log("There was an error!!!", error);
+  //     });
+  // };
+});
+
 
 
 //////////////////
@@ -498,7 +699,26 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Contact/view/{contactID}",
     templateUrl: "views/view_contact.html",
     controller: "ViewContactController"
-  });
+  })
+  .state({
+    name: "calls",
+    url: "/Calls",
+    templateUrl: "views/calls.html",
+    controller: "CallsController"
+  })
+  .state({
+    name: "create_call",
+    url: "/Call/create",
+    templateUrl: "views/create_call.html",
+    controller: "CreateCallController"
+  })
+  .state({
+    name: "view_call",
+    url: "/Call/view/{callID}",
+    templateUrl: "views/view_call.html",
+    controller: "ViewCallController"
+  })
+  ;
 
   $urlRouterProvider.otherwise("/");
 });
