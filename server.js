@@ -283,6 +283,9 @@ const Call = mongoose.model("Call", {
 //////////////// USER ROUTES /////////////
 // ----------- Register User ---------- //
 app.post("/users/register", function(request, response) {
+  console.log("Here is the registration information: ", request.body);
+  let password = request.body.password;
+
   bcrypt.hash(password, saltRounds)
     .then(function(hash) {
       let newRegistration = new User({
