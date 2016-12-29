@@ -214,7 +214,64 @@ const Contact = mongoose.model("Contact", {
   },
 });
 
-
+/////////////////// CALLS MODEL /////////////////////
+const Call = mongoose.model("Call", {
+  name: {
+    type: String,
+    required: true
+  },
+  linked_to: {
+    selected: String,
+    name: String
+  },
+  status: {
+    type: String,
+    required: true
+  },
+  direction: {
+    type: String
+  },
+  start_date: {
+    type: Date
+  },
+  end_date: {
+    type: Date
+  },
+  duration: {
+    type: Number
+  },
+  description: {
+    type: String
+  },
+  ownerID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  attendee_users: [{
+    type: mongoose.Schema.Types.ObjectId
+  }],
+  attendee_contacts: [{
+    type: mongoose.Schema.Types.ObjectId
+  }],
+  attendee_leads: [{
+    type: mongoose.Schema.Types.ObjectId
+  }],
+  created_at: {
+    type: Date,
+    required: true
+  },
+  created_by_ID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  updated_at: {
+    type: Date,
+    default: Date.now
+  },
+  updated_by_ID: {
+    type: mongoose.Schema.Types.ObjectId
+  }
+});
 
 
 
@@ -370,7 +427,6 @@ app.post("/accounts/create", function(request, response) {
     })
     .catch(function(error) {
       response.status(400);
-      console.log("Didn't create account because: ", error.stack);
       console.log("\n\n\n");
       console.log("Didn't create account because: ", error);
     });
@@ -649,6 +705,87 @@ app.post("/contact/add_account", function(request, response) {
     });
 });
 
+
+////////////// CALL ROUTES //////////////
+// ---------- Search Parent --------- //
+// Used to link calls, meetings, tasks, etc //
+app.get("/search_parent/:parent/:searchTerm", function (request, response) {
+  let parent = request.params.parent;
+  let searchTerm = request.params.searchTerm;
+  search = "/" + searchTerm + ".*/i"
+  console.log("\n\nParent: ", parent);
+  console.log("\n\nSearch: ", search);
+
+  if (parent === "Account") {
+    Account.find({
+      name: eval(search)
+    })
+      .then(function(results) {
+        console.log("There are the search results", results);
+        var type = "Account";
+        response.json({
+          type: type,
+          results: results
+        })
+      })
+      .catch(function(error) {
+        console.log("There was an error");
+      });
+  } else if (parent === "Contact") {
+    Contact.find({
+      first_name: eval(search)
+    })
+      .then(function(results) {
+        console.log("There are the search results", results);
+        var type = "Contact";
+        response.json({
+          type: type,
+          results: results
+        })
+      })
+      .catch(function(error) {
+        console.log("There was an error");
+      });
+  } else {
+    console.log("Need to update this part later!");
+  }
+});
+
+// ----------- Create Call ---------- //
+app.post("/calls/create", function(request, response) {
+  let user_id = request.body.user_id;
+  console.log("This is the request sent from the front end: ", request.body);
+
+  let newCall = new Call({
+    name: request.body.call_info.name,
+    linked_to: {
+      selected: request.body.call_info.selected_parent,
+      name: request.body.call_info.name,
+    },
+    status: request.body.call_info.selected_status,
+    direction: request.body.call_info.direction,
+    start_date: request.body.call_info.start_date,
+    end_date: request.body.call_info.end_date,
+    duration: request.body.call_info.duration,
+    description: request.body.call_info.description,
+    ownerID: user_id,
+    created_at: new Date(),
+    created_by_ID: user_id
+  });
+
+  newCall.save()
+    .then(function(result) {
+      console.log("Call created successfully: ", result);
+      response.json({
+        message: "Call created successfully"
+      });
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("\n\n\n");
+      console.log("Didn't create account because: ", error);
+    });
+});
 
 
 

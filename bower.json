@@ -2,11 +2,11 @@
   "name": "crm",
   "description": "CRM software created for final DigitalCrafts project",
   "dependencies": {
-      "bootstrap": "3.3.7",
-      "font-awesome": "4.7.0",
-      "angular": "1.6.0",
-      "angular-cookies": "1.6.0",
-      "angular-ui-router": "0.3.2"   
+    "bootstrap": "3.3.7",
+    "font-awesome": "4.7.0",
+    "angular": "1.6.0",
+    "angular-cookies": "1.6.0",
+    "angular-ui-router": "0.3.2"
   },
   "main": "index.js",
   "authors": [
