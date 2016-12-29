@@ -199,6 +199,25 @@ service.createCall = function(callInfo) {
   });
 };
 
+// Show all calls
+service.showCalls = function() {
+  console.log("I'm in the factory");
+  return $http({
+    method: "GET",
+    url: "/calls"
+  });
+};
+
+// View call
+service.viewCall = function(callID) {
+  console.log("I'm in the factory and I got this: ", callID);
+  return $http({
+    method: "GET",
+    url: "/call/view/" + callID,
+  });
+};
+
+
 
 ////////////////////////////////////////////////////////////
 ///////////////////// GENERAL SERVICES /////////////////////
@@ -473,15 +492,15 @@ app.controller("CallsController", function($scope, $state, CRM_Factory) {
     $state.go("create_call");
   };
 
-  // CRM_Factory.showAccounts()
-  //   .then(function(accounts) {
-  //     $scope.accounts = accounts.data.accounts;
-  //     console.log("Accounts from backend:",  $scope.accounts);
-  //     $state.go("accounts");
-  //   })
-  //   .catch(function(error) {
-  //     console.log("There was an error!!!", error);
-  //   });
+  CRM_Factory.showCalls()
+    .then(function(calls) {
+      $scope.calls = calls.data.calls;
+      console.log("Calls from backend:",  $scope.calls);
+      // $state.go("calls");
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
 });
 
 app.controller("CreateCallController", function($scope, $state, CRM_Factory) {
@@ -558,6 +577,60 @@ app.controller("CreateCallController", function($scope, $state, CRM_Factory) {
         console.log("There was an error!!!", error.stack);
       });
   };
+});
+
+app.controller("ViewCallController", function($scope, $stateParams, CRM_Factory) {
+  console.log("I'm inside the ViewCallController");
+  console.log("stateParams", $stateParams);
+
+  // Scroll to top when loading page (need this when coming from an account)
+  // document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+  var call_id = $stateParams.callID;
+
+  CRM_Factory.viewCall(call_id)
+  .then(function(call_info) {
+    console.log("\n\nThis is the call_info: ", call_info);
+    $scope.call = call_info.data.call;
+    // $scope.call_accounts = call_info.data.call_accounts;
+    console.log("\nThe call: ", $scope.call);
+    // console.log("\nThe accounts: ", $scope.call_accounts);
+  })
+  .catch(function(error) {
+    console.log("There was an error!!!", error);
+  });
+
+  // $scope.searchAccounts = function(event) {
+  //   console.log("Event is: ", event);
+  //   if (event.keyCode === 8) {
+  //     console.log("This is the event.keyCode 8: ", event);
+  //     $scope.accounts = "";
+  //   } else if (event.keyCode === 16) {
+  //     console.log("This is the event.keyCode 16: ", event);
+  //   } else {
+  //     console.log("$scope.call.accounts_search", $scope.call.accounts_search);
+  //     CRM_Factory.searchAccounts($scope.call.accounts_search)
+  //       .then(function(accounts) {
+  //         console.log("Here are the accounts: ", accounts);
+  //         $scope.accounts = accounts.data.results;
+  //       })
+  //       .catch(function(error) {
+  //         console.log("There was an error!!!", error);
+  //       });
+  //   }
+  // };
+  //
+  // $scope.addAccountToContact = function(accountID, callID) {
+  //   console.log("Here's ID of the account you clicked: ", accountID);
+  //   console.log("Here's the ID of the call you are viewing: ", callID);
+  //   CRM_Factory.addAccountToContact(accountID, callID)
+  //     .then(function(updated_information) {
+  //       console.log("Here's the updated_information", updated_information);
+  //     })
+  //     .catch(function(error) {
+  //       console.log("There was an error!!!", error);
+  //     });
+  // };
 });
 
 
@@ -638,6 +711,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Call/create",
     templateUrl: "views/create_call.html",
     controller: "CreateCallController"
+  })
+  .state({
+    name: "view_call",
+    url: "/Call/view/{callID}",
+    templateUrl: "views/view_call.html",
+    controller: "ViewCallController"
   })
   ;
 

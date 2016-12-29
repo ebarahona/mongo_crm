@@ -22,15 +22,15 @@
         <th>Assigned User</th>
       </tr>
     </thead>
-    <!-- <tbody>
-      <tr ng-repeat="contact in contacts | orderBy:sortType:sortReverse">
-        <td><a ui-sref="view_contact({contactID: contact._id})">{{ contact.first_name }} {{ contact.last_name }}</a></td>
-        <td>{{ contact.account }}</td>
-        <td>{{ contact.email }}</td>
-        <td>{{ contact.phone }}</td>
-        <td>{{ contact.created_at | date:'medium' }}</td>
+    <tbody>
+      <tr ng-repeat="call in calls | orderBy:sortType:sortReverse">
+        <td><a ui-sref="view_call({callID: call._id})">{{ call.name }}</a></td>
+        <td>{{ call.linked_to.name }}</td>
+        <td>{{ call.status }}</td>
+        <td>{{ call.start_date | date:'medium' }}</td>
+        <td>{{ call.ownerID }}</td>
       </tr>
-    </tbody> -->
+    </tbody>
     </table>
   </div>
 </div>

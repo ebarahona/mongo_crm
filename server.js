@@ -760,7 +760,7 @@ app.post("/calls/create", function(request, response) {
     name: request.body.call_info.name,
     linked_to: {
       selected: request.body.call_info.selected_parent,
-      name: request.body.call_info.name,
+      name: request.body.call_info.chosen_result,
     },
     status: request.body.call_info.selected_status,
     direction: request.body.call_info.direction,
@@ -785,6 +785,62 @@ app.post("/calls/create", function(request, response) {
       console.log("\n\n\n");
       console.log("Didn't create account because: ", error);
     });
+});
+
+// ----------- Show All Calls --------- //
+app.get("/calls", function(request, response) {
+  console.log("I'm in the backend and want to show you all my calls");
+  Call.find()
+    .then(function(calls) {
+      console.log("\nHere are my calls: \n", calls);
+      response.json({
+        calls: calls
+      });
+    })
+    .catch(function(error) {
+      console.log("There was an error getting the calls");
+      response.status(401) ;
+      response.json({
+        message: "There was an error getting the calls"
+      });
+    });
+});
+
+// -------------- Show Call ------------ //
+app.get("/call/view/:callID", function(request, response) {
+  let callID = request.params.callID;
+  console.log("I'm in the backend", callID);
+  Call.findById(callID)
+  .then(function(call) {
+    console.log("This is the call: ", call);
+    response.json({
+      call: call
+    })
+  //   let call_account_IDs = call.account;
+  //   console.log("Here are the account IDs: ", call_account_IDs);
+  //
+  //   return Account.find({
+  //     _id: {
+  //       $in: call_account_IDs
+  //     }
+  //   })
+  //     .then(function(accounts) {
+  //       console.log("\nHere is the call: ", call);
+  //       console.log("\nHere are the accounts: ", accounts);
+  //       response.json({
+  //         call: call,
+  //         contact_accounts: accounts
+  //       });
+  //     })
+  //     .catch(function(error) {
+  //       response.status(400);
+  //       console.log("There was an error looking for the information: ", error.stack);
+  //     });
+  })
+  .catch(function(error) {
+    response.status(400);
+    console.log("There was an error looking for that account: ", error.stack);
+  });
 });
 
 
