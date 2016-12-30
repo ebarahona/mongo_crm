@@ -1,4 +1,4 @@
-var app = angular.module("crm_app", ["ui.router", "ngCookies"]);
+var app = angular.module("crm_app", ["ui.router", "ngCookies", "ngTouch", "ngAnimate", "ui.bootstrap"]);
 
 
 ////////////////
