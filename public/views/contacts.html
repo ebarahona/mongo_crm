@@ -23,7 +23,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="contact in contacts | orderBy:sortType:sortReverse">
+      <tr ng-repeat="contact in contacts | orderBy:'first_name'">
         <td><a ui-sref="view_contact({contactID: contact._id})">{{ contact.first_name }} {{ contact.last_name }}</a></td>
         <td>{{ contact.account }}</td>
         <td>{{ contact.email }}</td>

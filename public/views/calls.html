@@ -23,7 +23,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="call in calls | orderBy:sortType:sortReverse">
+      <tr ng-repeat="call in calls | orderBy:'name'">
         <td><a ui-sref="view_call({callID: call._id})">{{ call.name }}</a></td>
         <td>{{ call.linked_to.name }}</td>
         <td>{{ call.status }}</td>
