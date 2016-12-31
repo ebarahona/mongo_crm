@@ -12,20 +12,28 @@
 
   </div>
   <div class="row">
+
+    <div id="search">
+			<span class="col-md-1 search-label">Search</span>
+			<span class="col-md-3">
+			<input type="text" class="form-control ng-pristine ng-valid" ng-model="searchKeyword">
+			</span>
+		</div>
+
     <table class="table table-responsive table-striped table-hover ">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Website</th>
-        <th>Type</th>
-        <th>Industry</th>
-        <th>Phone</th>
-        <th>City</th>
-        <th>Created At</th>
+        <th><a href="" ng-click="orderByField='name'; reverseSort = !reverseSort">Name</a></th>
+        <th><a href="" ng-click="orderByField='website'; reverseSort = !reverseSort">Website</a></th>
+        <th><a href="" ng-click="orderByField='type'; reverseSort = !reverseSort">Type</a></th>
+        <th><a href="" ng-click="orderByField='industry'; reverseSort = !reverseSort">Industry</a></th>
+        <th><a href="" ng-click="orderByField='phone'; reverseSort = !reverseSort">Phone</a></th>
+        <th><a href="" ng-click="orderByField='city'; reverseSort = !reverseSort">City</a></th>
+        <th><a href="" ng-click="orderByField='created_at'; reverseSort = !reverseSort">Created At</a></th>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="account in accounts | orderBy:'name'">
+      <tr ng-repeat="account in accounts | filter: searchKeyword | orderBy:orderByField:reverseSort">
         <td><a ui-sref="view_account({accountID: account._id})">{{ account.name }}</a></td>
         <td>{{ account.website }}</td>
         <td>{{ account.type }}</td>

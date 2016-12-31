@@ -3,6 +3,19 @@
 }*/
 
 /*
+ * General Styles
+ */
+/* Search fields */
+#search {
+  padding: 20px 0 40px 0;
+}
+
+.search-label {
+  font-weight: bold;
+}
+
+
+/*
  * Navigation Bar Styles
  */
 #logout {

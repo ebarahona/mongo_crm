@@ -1,19 +1,30 @@
 <!DOCTYPE html>
 <div class="container">
-  <table class="table table-responsive table-striped table-hover">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Username</th>
-      <th>Email</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr ng-repeat="user in users | orderBy:'first_name'">
-      <td>{{ user.first_name }} {{ user.last_name }}</td>
-      <td>{{ user.username }}</td>
-      <td>{{ user.email }}</td>
-    </tr>
-  </tbody>
-</table>
+  <div class="row">
+
+    <div id="search">
+  		<span class="col-md-1 search-label">Search</span>
+  		<span class="col-md-3">
+  		<input type="text" class="form-control ng-pristine ng-valid" ng-model="searchKeyword">
+  		</span>
+  	</div>
+
+    <table class="table table-responsive table-striped table-hover">
+      <thead>
+        <tr>
+          <th><a href="" ng-click="orderByField='first_name'; reverseSort = !reverseSort">Name</a></th>
+          <th><a href="" ng-click="orderByField='username'; reverseSort = !reverseSort">Username</a></th>
+          <th><a href="" ng-click="orderByField='email'; reverseSort = !reverseSort">Email</a></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="user in users | filter: searchKeyword | orderBy:orderByField:reverseSort">
+          <td>{{ user.first_name }} {{ user.last_name }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
 </div>
