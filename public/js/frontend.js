@@ -60,6 +60,16 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
+  // Show user
+  service.viewUser = function(userID) {
+    console.log("I'm in the factory!");
+    console.log(userID);
+    return $http({
+      method: "GET",
+      url: "/user/" + userID
+    });
+  };
+
   ////////////////////////////////////////////////////////////
   ///////////////////// ACCOUNT SERVICES /////////////////////
   ////////////////////////////////////////////////////////////
@@ -251,20 +261,36 @@ app.controller("HomeController", function($scope, $state, CRM_Factory) {
 
 
 //////////// USER-SPECIFIC CONTROLLERS ///////////
+// app.controller("RegisterController", function($scope, $state, CRM_Factory) {
+//   // console.log("I'm using the RegisterController");
+//   $scope.user = {};
+//   $scope.register = function() {
+//     // var user_registration = $scope.user;
+//     var user_registration = $scope.user;
+//     var password2 = $scope.user.password2;
+//     console.log("password2", password2);
+//     console.log("user_registration: ", user_registration);
+//     delete user_registration.password2;
+//     CRM_Factory.register(user_registration)
+//       .then(function(success) {
+//         console.log("We were successful: ", success);
+//         $state.go("login");
+//       })
+//       .catch(function(error) {
+//         console.log("There was an error!!!", error.stack);
+//       });
+//   };
+// });
+
 app.controller("RegisterController", function($scope, $state, CRM_Factory) {
-  // console.log("I'm using the RegisterController");
+  console.log("I'm using the RegisterController");
   $scope.user = {};
   $scope.register = function() {
+    console.log("I clicked the register button");
     var user_registration = $scope.user;
-    delete user_registration.password2;
-    CRM_Factory.register(user_registration)
-      .then(function(success) {
-        console.log("We were successful: ", success);
-        $state.go("login");
-      })
-      .catch(function(error) {
-        console.log("There was an error!!!", error.stack);
-      });
+    console.log("User registration: ", user_registration);
+    var image = $scope.user.profile_image;
+    console.log("Image: ", image);
   };
 });
 
@@ -299,6 +325,20 @@ app.controller("UsersController", function($scope, CRM_Factory) {
   CRM_Factory.showUsers()
     .then(function(users) {
       $scope.users = users.data.users;
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
+});
+
+app.controller("ViewUserController", function($scope, $stateParams, CRM_Factory) {
+  var user_id = $stateParams.userID;
+  console.log("user_id: ", user_id);
+
+  CRM_Factory.viewUser(user_id)
+    .then(function(user) {
+      console.log("Here's the user: ", user);
+      $scope.user = user.data.user[0];
     })
     .catch(function(error) {
       console.log("There was an error!!!", error);
@@ -648,12 +688,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: "HomeController"
   })
   .state({
-    name: "users",
-    url: "/Users",
-    templateUrl: "views/users.html",
-    controller: "UsersController"
-  })
-  .state({
     name: "register",
     url: "/User/register",
     templateUrl: "views/register.html",
@@ -664,6 +698,28 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/User/login",
     templateUrl: "views/login.html",
     controller: "LoginController"
+  })
+  .state({
+    name: "users",
+    url: "/Users",
+    templateUrl: "views/users.html",
+    controller: "UsersController"
+  })
+  .state({
+    name: "view_user",
+    url: "/Users/view/{userID}",
+    templateUrl: "views/view_user.html",
+    controller: "ViewUserController"
+  })
+  .state({
+    name: "view_user.home",
+    url: "/Users/view",
+    templateUrl: "views/users.html"
+  })
+  .state({
+    name: "view_user.profile",
+    url: "/Users/view",
+    templateUrl: "views/view_user.html"
   })
   .state({
     name: "accounts",

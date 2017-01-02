@@ -22,6 +22,27 @@
   cursor: pointer;
 }
 
+
+/*
+ * Profile Styles
+ */
+.profile-image {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.information {
+  margin-top: 25px;
+}
+
+.profile-details {
+  padding-left: 10px;
+}
+
+.profile-details li {
+  list-style: none;
+}
+
 /*
  * avoid the undesirable flicker effect caused by the html template display
  */
@@ -32,8 +53,6 @@
 /*
  * Table styles
  */
-
-
 
 /* Deal with Firefox's awkward fieldset styling involving width that interferes with the responsive table */
 @-moz-document url-prefix() {
