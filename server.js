@@ -587,7 +587,6 @@ app.put("/account/update", function(request, response) {
       $set: {
         name: request.body.account_info.name,
         email: request.body.account_info.email,
-        phone: request.body.account_info.phone,
         website: request.body.account_info.website,
         address: request.body.account_info.address,
         address2: request.body.account_info.address2,
@@ -599,6 +598,9 @@ app.put("/account/update", function(request, response) {
         description: request.body.account_info.description,
         updated_at: new Date(),
         updated_by_ID: user_id
+      },
+      $addToSet: {
+        phone: request.body.account_info.phone,
       }
     })
       .then(function(updatedAccount) {

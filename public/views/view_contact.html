@@ -41,11 +41,13 @@
                       </span>
                     </div>
         					</li>
-                  <li>
+                  <li ng-show="contact_accounts.length > 0">
                     <div class="details">
                       <i class="fa fa-building-o fa-fw"></i> account
-                      <span class="details-info">
-                        {{ contact.account }}
+                      <span ng-repeat="account in contact_accounts" class="details-info">
+                        <a ui-sref="view_account({accountID: account._id})">
+                          {{ account.name }}
+                        </a>
                       </span>
                     </div>
                   </li>
