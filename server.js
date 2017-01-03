@@ -137,6 +137,9 @@ const Account = mongoose.model("Account", {
   type: {
     type: String
   },
+  industry: {
+    type: String
+  },
   description: {
     type: String
   },
@@ -156,6 +159,13 @@ const Account = mongoose.model("Account", {
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
+  updated_at: {
+    type: Date,
+    default: Date.now
+  },
+  updated_by_ID: {
+    type: mongoose.Schema.Types.ObjectId
+  }
 });
 
 ////////////////// CONTACTS MODEL ////////////////////
@@ -224,6 +234,13 @@ const Contact = mongoose.model("Contact", {
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
+  updated_at: {
+    type: Date,
+    default: Date.now
+  },
+  updated_by_ID: {
+    type: mongoose.Schema.Types.ObjectId
+  }
 });
 
 /////////////////// CALLS MODEL /////////////////////
@@ -547,20 +564,52 @@ app.get("/account/view/:accountID", function(request, response) {
                 account_contacts: contacts,
                 user: user
               });
-            })
-            .catch(function(error) {
-              response.status(400);
-              console.log("There was an error looking for that account: ", error.stack);
             });
-        })
-        .catch(function(error) {
-          response.status(400);
-          console.log("There was an error looking for the information: ", error.stack);
         });
     })
     .catch(function(error) {
       response.status(400);
       console.log("There was an error looking for that account: ", error.stack);
+    });
+});
+
+// ------------ Update Account ---------- //
+app.put("/account/update", function(request, response) {
+  let user_id = request.body.user_id;
+  let account_id = request.body.account_info._id;
+  console.log("This is the request sent from the front end: ", request.body);
+  console.log("This is the account id: ", account_id);
+
+  return Account.update({
+      _id: account_id
+    },
+    {
+      $set: {
+        name: request.body.account_info.name,
+        email: request.body.account_info.email,
+        phone: request.body.account_info.phone,
+        website: request.body.account_info.website,
+        address: request.body.account_info.address,
+        address2: request.body.account_info.address2,
+        city: request.body.account_info.city,
+        state: request.body.account_info.state,
+        zip_code: request.body.account_info.zip_code,
+        type: request.body.account_info.type,
+        industry: request.body.account_info.industry,
+        description: request.body.account_info.description,
+        updated_at: new Date(),
+        updated_by_ID: user_id
+      }
+    })
+      .then(function(updatedAccount) {
+        console.log("Account updated successfully: ", updatedAccount);
+        response.json({
+          message: "Account updated successfully"
+        });
+      })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error updating the account: ", error.stack);
     });
 });
 

@@ -10,6 +10,12 @@
   </div>
 
   <div class="row">
+    <div class="col-lg-12">
+      <button ui-sref="edit_account({accountID: account._id})" class="btn btn-primary btn-sm" type="button" name="edit_btn">Edit</button>
+    </div>
+  </div>
+
+  <div class="row">
     <div class="col-lg-10 col-sm-11 ">
 
       <div class="row profile">
@@ -99,7 +105,9 @@
                     <div class="details"><i class="fa fa-map-marker fa-fw"></i>
                       address
                       <span class="details-info">
-                        {{ account.address }}<br>
+                        <span ng-show="account.address">
+                          {{ account.address }}<br>
+                        </span>
                         <span ng-show="account.address2">
                           {{ account.address2 }}<br>
                         </span>
@@ -127,9 +135,11 @@
                 <ul class="profile-details">
                   <li>
                     <div class="details">
-                      <i class="fa fa-building-o fa-fw"></i> contacts
-                      <span class="details-info">
-                        {{ account.contacts }}
+                      <i class="fa fa-user fa-fw"></i> contacts
+                      <span ng-repeat="contact in account_contacts" class="details-info">
+                        <a ui-sref="view_contact({contactID: contact._id})">
+                          {{ contact.salutation }} {{ contact.first_name }} {{ contact.last_name }}
+                        </a>
                       </span>
                     </div>
                   </li>
