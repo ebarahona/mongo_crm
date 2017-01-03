@@ -395,8 +395,10 @@ app.controller("ViewAccountController", function($scope, $stateParams, CRM_Facto
       console.log("\n\nThis is the account_info: ", account_info);
       $scope.account = account_info.data.account;
       $scope.account_contacts = account_info.data.account_contacts;
+      $scope.account_owner = account_info.data.user[0];
       console.log("\nThe account: ", $scope.account);
       console.log("\nThe contacts: ", $scope.account_contacts);
+      console.log("\nThe account owner: ", $scope.account_owner);
     })
     .catch(function(error) {
       console.log("There was an error!!!", error);

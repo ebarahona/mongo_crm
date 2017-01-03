@@ -63,6 +63,10 @@
   padding-left: 0;
 }
 
+.sidebar {
+  border-right: 1px solid darkgrey;
+}
+
 
 /*
  * Footer Styles
@@ -113,5 +117,9 @@ footer {
 
   .col-xs-12 {
     padding-left: 15px;
+  }
+
+  .sidebar {
+    border-right: none;
   }
  }

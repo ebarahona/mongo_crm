@@ -537,10 +537,21 @@ app.get("/account/view/:accountID", function(request, response) {
         .then(function(contacts) {
           console.log("\nHere are the contacts: ", contacts);
           console.log("\nHere is the account: ", account);
-          response.json({
-            account: account,
-            account_contacts: contacts
-          });
+          return User.find({
+            _id: account.ownerID
+          })
+            .then(function(user) {
+              console.log("\nHere is the user: ", user);
+              response.json({
+                account: account,
+                account_contacts: contacts,
+                user: user
+              });
+            })
+            .catch(function(error) {
+              response.status(400);
+              console.log("There was an error looking for that account: ", error.stack);
+            });
         })
         .catch(function(error) {
           response.status(400);
