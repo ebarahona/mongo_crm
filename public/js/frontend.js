@@ -77,7 +77,6 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
   // Create an account
   service.createAccount = function(account_info) {
     var user_id = $rootScope.user._id;
-    console.log("I'm in the Factory -- Account Services");
     console.log("ID of the user that clicked the save account button: ", user_id);
     console.log("Account info: ", account_info);
     return $http({
@@ -101,10 +100,24 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 
   // View account
   service.viewAccount = function(accountID) {
-    console.log("I'm in the factory and I got this: ", accountID);
+    console.log("I'm in the factory to view: ", accountID);
     return $http({
       method: "GET",
       url: "/account/view/" + accountID,
+    });
+  };
+
+  // Update account
+  service.updateAccount = function(account_info) {
+    var user_id = $rootScope.user._id;
+    console.log("I'm in the factory and will update: ", account_info);
+    return $http({
+      method: "PUT",
+      url: "/account/update",
+      data: {
+        user_id: user_id,
+        account_info: account_info
+      }
     });
   };
 
@@ -439,6 +452,75 @@ app.controller("ViewAccountController", function($scope, $stateParams, CRM_Facto
   };
 });
 
+app.controller("EditAccountController", function($scope, $stateParams, $state, CRM_Factory) {
+  console.log("Using the EditAccountController");
+  console.log("stateParams", $stateParams);
+
+  // Scroll to top when loading page (need this when coming from a contact)
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+  var account_id = $stateParams.accountID;
+  CRM_Factory.viewAccount(account_id)
+    .then(function(account_info) {
+      console.log("\n\nThis is the account_info: ", account_info);
+      $scope.account = account_info.data.account;
+      $scope.account_contacts = account_info.data.account_contacts;
+      $scope.account_owner = account_info.data.user[0];
+      console.log("\nThe account: ", $scope.account);
+      console.log("\nThe contacts: ", $scope.account_contacts);
+      console.log("\nThe account owner: ", $scope.account_owner);
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
+
+  $scope.searchContacts = function(event) {
+    console.log("Event is: ", event);
+    if (event.keyCode === 8) {
+      console.log("This is the event: ", event);
+      $scope.contacts = "";
+    } else if (event.keyCode === 16) {
+      console.log("This is the event: ", event);
+    } else {
+      CRM_Factory.searchContacts($scope.account.contacts_search)
+        .then(function(contacts) {
+          console.log("Here are the contacts: ", contacts);
+          $scope.contacts = contacts.data.results;
+        })
+        .catch(function(error) {
+          console.log("There was an error!!!", error);
+        });
+    }
+  };
+
+  $scope.addContactToAccount = function(contactID, accountID) {
+    console.log("Here's ID of the contact you clicked: ", contactID);
+    console.log("Here's the ID of the account you are viewing: ", accountID);
+    CRM_Factory.addContactToAccount(contactID, accountID)
+      .then(function(updated_information) {
+        console.log("Here's the updated_information", updated_information);
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error);
+      });
+  };
+
+  $scope.saveAccount = function() {
+    var account_information = $scope.account;
+    console.log("Account information: ", account_information);
+    CRM_Factory.updateAccount(account_information)
+      .then(function(success) {
+        console.log("\n\n\nWe were successful: ", success);
+        console.log("\n\naccount_information._id: ", account_information._id);
+        // Go back to view the updated account
+        $state.go("view_account", {accountID: account_information._id});
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+});
+
 //////////// CONTACT-SPECIFIC CONTROLLERS ///////////
 app.controller("CreateContactController", function($scope, $state, CRM_Factory) {
   console.log("I'm using the CreateContactController.  Yay!");
@@ -746,6 +828,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Account/view/{accountID}",
     templateUrl: "views/view_account.html",
     controller: "ViewAccountController"
+  })
+  .state({
+    name: "edit_account",
+    url: "/Account/edit/{accountID}",
+    templateUrl: "views/edit_account.html",
+    controller: "EditAccountController"
   })
   .state({
     name: "contacts",
