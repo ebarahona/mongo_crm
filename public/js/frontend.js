@@ -180,6 +180,20 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
+  // Update contact
+  service.updateContact = function(contact_info) {
+    var user_id = $rootScope.user._id;
+    console.log("I'm in the factory and will update: ", contact_info);
+    return $http({
+      method: "PUT",
+      url: "/contact/update",
+      data: {
+        user_id: user_id,
+        contact_info: contact_info
+      }
+    });
+  };
+
   // Search contacts
   service.searchContacts = function(searchTerm) {
     console.log("Term being searched in the factory is: ", searchTerm);
@@ -614,6 +628,78 @@ app.controller("ViewContactController", function($scope, $stateParams, CRM_Facto
   };
 });
 
+app.controller("EditContactController", function($scope, $stateParams, $state, CRM_Factory) {
+  console.log("I'm inside the EditContactController");
+  console.log("stateParams", $stateParams);
+
+  // Scroll to top when loading page (need this when coming from an account)
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+  var contact_id = $stateParams.contactID;
+
+  CRM_Factory.viewContact(contact_id)
+  .then(function(contact_info) {
+    console.log("\n\nThis is the contact_info: ", contact_info);
+    $scope.contact = contact_info.data.contact;
+    $scope.contact_accounts = contact_info.data.contact_accounts;
+    $scope.contact_owner = contact_info.data.user[0];
+    console.log("\nThe contact: ", $scope.contact);
+    console.log("\nThe accounts: ", $scope.contact_accounts);
+    console.log("\nThe contact owner: ", $scope.contact_owner);
+  })
+  .catch(function(error) {
+    console.log("There was an error!!!", error);
+  });
+
+  $scope.searchAccounts = function(event) {
+    console.log("Event is: ", event);
+    if (event.keyCode === 8) {
+      console.log("This is the event.keyCode 8: ", event);
+      $scope.accounts = "";
+    } else if (event.keyCode === 16) {
+      console.log("This is the event.keyCode 16: ", event);
+    } else {
+      console.log("$scope.contact.accounts_search", $scope.contact.accounts_search);
+      CRM_Factory.searchAccounts($scope.contact.accounts_search)
+        .then(function(accounts) {
+          console.log("Here are the accounts: ", accounts);
+          $scope.accounts = accounts.data.results;
+        })
+        .catch(function(error) {
+          console.log("There was an error!!!", error);
+        });
+    }
+  };
+
+  $scope.addAccountToContact = function(accountID, contactID) {
+    console.log("Here's ID of the account you clicked: ", accountID);
+    console.log("Here's the ID of the contact you are viewing: ", contactID);
+    CRM_Factory.addAccountToContact(accountID, contactID)
+      .then(function(updated_information) {
+        console.log("Here's the updated_information", updated_information);
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error);
+      });
+  };
+
+  $scope.saveContact = function() {
+    var contact_information = $scope.contact;
+    console.log("Contact information: ", contact_information);
+    CRM_Factory.updateContact(contact_information)
+      .then(function(success) {
+        console.log("\n\n\nWe were successful: ", success);
+        console.log("\n\ncontact_information._id: ", contact_information._id);
+        // Go back to view the updated contact
+        $state.go("view_contact", {contactID: contact_information._id});
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+
+});
+
 //////////// CALL-SPECIFIC CONTROLLERS ///////////
 app.controller("CallsController", function($scope, $state, CRM_Factory) {
   console.log("I'm using the CallsController.  Yay!");
@@ -852,6 +938,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Contact/view/{contactID}",
     templateUrl: "views/view_contact.html",
     controller: "ViewContactController"
+  })
+  .state({
+    name: "edit_contact",
+    url: "/Contact/edit/{contactID}",
+    templateUrl: "views/edit_contact.html",
+    controller: "EditContactController"
   })
   .state({
     name: "calls",

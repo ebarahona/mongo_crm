@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <h4><a ui-sref="contacts">Contacts </a>&gt;&gt; {{ contact.first_name }} {{ contact.last_name }}</h4>
+    </div>
+  </div>
+
+  <div class="row">
+    <button ng-click="saveContact()" class="btn btn-primary btn-sm" type="button" name="button">Save</button>
+    <button ui-sref="view_contact({contactID: contact._id})" class="btn btn-default btn-sm" type="button" name="button">Cancel</button>
+    <hr>
+  </div>
+
+  <div class="row">
+    <form class="form-horizontal">
+      <fieldset>
+        <div class="form-group">
+          <label for="select" class="col-lg-2 control-label">Salutation</label>
+          <div class="col-lg-8">
+            <select ng-model="contact.salutation" name="salutation" class="form-control" id="salutation">
+              <option disabled selected value> -- select an option -- </option>
+              <option>Mr.</option>
+              <option>Ms.</option>
+              <option>Mrs.</option>
+              <option>Dr.</option>
+              <option>Prof.</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="first_name" class="col-lg-2 control-label">First Name</label>
+          <div class="col-lg-8">
+            <input ng-model="contact.first_name" name="first_name" type="text" class="form-control" id="firstName" placeholder="First Name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="last_name" class="col-lg-2 control-label">Last Name</label>
+          <div class="col-lg-8">
+            <input ng-model="contact.last_name" name="last_name" type="text" class="form-control" id="lastName" placeholder="Last Name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email" class="col-lg-2 control-label">Email</label>
+          <div class="col-lg-8">
+            <input ng-model="contact.email" name="email" type="text" class="form-control" id="email" placeholder="Email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="phone" class="col-lg-2 control-label">Phone</label>
+          <div class="col-lg-8">
+            <input ng-model="contact.phone" name="phone" type="text" class="form-control" id="phone" placeholder="Phone">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="address" class="col-lg-2 control-label">Address Line 1</label>
+          <div class="col-lg-8">
+            <input ng-model="contact.address" name="address" type="text" class="form-control" id="address" placeholder="Address Line 1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="address2" class="col-lg-2 control-label">Address Line 2 (optional)</label>
+          <div class="col-lg-8">
+            <input ng-model="contact.address2" name="address2" type="text" class="form-control" id="address2" placeholder="Address Line 2 (optional)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="city" class="col-lg-2 control-label">City</label>
+          <div class="col-lg-8">
+            <input ng-model="contact.city" name="city" type="text" class="form-control" id="city" placeholder="City">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="state" class="col-lg-2 control-label">State</label>
+          <div class="col-lg-8">
+            <input ng-model="contact.state" name="state" type="text" class="form-control" id="state" placeholder="State">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="zip_code" class="col-lg-2 control-label">Zip Code</label>
+          <div class="col-lg-8">
+            <input ng-model="contact.zip_code" name="zip_code" type="text" class="form-control" id="zipCode" placeholder="Zip Code">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="account" class="col-lg-2 control-label">Account</label>
+          <div class="col-lg-8">
+            <input ng-model="contact.account" name="account" type="text" class="form-control" id="account" placeholder="Account">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="description" class="col-lg-2 control-label">Description</label>
+          <div class="col-lg-8">
+            <textarea ng-model="contact.description"
+                      name="description"
+                      type="text"
+                      class="form-control"
+                      id="description"
+                      placeholder="Description"
+                      rows="8"
+                      cols="80">
+            </textarea>
+          </div>
+        </div>
+
+        <!-- Not currently working. Uncomment after fixing -->
+        <!-- <div class="form-group">
+          <label for="profile_image" class="col-lg-2 control-label">Profile Image</label>
+          <div class="col-lg-8">
+            <input ng-model="contact.profile_image" name="profile_image" type="file" class="form-control" id="profile_image" placeholder="Profile Image">
+          </div>
+        </div> -->
+      </fieldset>
+    </form>
+  </div>
+</div>

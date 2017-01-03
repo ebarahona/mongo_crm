@@ -4,7 +4,12 @@
   <div class="row">
     <div class="col-lg-12">
       <h4><a ui-sref="contacts">Contacts </a>&gt;&gt; {{ contact.first_name }} {{ contact.last_name }}</h4>
+    </div>
+  </div>
 
+  <div class="row">
+    <div class="col-lg-12">
+      <button ui-sref="edit_contact({contactID: contact._id})" class="btn btn-primary btn-sm" type="button" name="edit_btn">Edit</button>
       <hr>
     </div>
   </div>
@@ -36,11 +41,13 @@
                       </span>
                     </div>
         					</li>
-                  <li>
+                  <li ng-show="contact_accounts.length > 0">
                     <div class="details">
                       <i class="fa fa-building-o fa-fw"></i> account
-                      <span class="details-info">
-                        {{ contact.account }}
+                      <span ng-repeat="account in contact_accounts" class="details-info">
+                        <a ui-sref="view_account({accountID: account._id})">
+                          {{ account.name }}
+                        </a>
                       </span>
                     </div>
                   </li>

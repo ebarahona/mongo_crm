@@ -587,7 +587,6 @@ app.put("/account/update", function(request, response) {
       $set: {
         name: request.body.account_info.name,
         email: request.body.account_info.email,
-        phone: request.body.account_info.phone,
         website: request.body.account_info.website,
         address: request.body.account_info.address,
         address2: request.body.account_info.address2,
@@ -599,6 +598,9 @@ app.put("/account/update", function(request, response) {
         description: request.body.account_info.description,
         updated_at: new Date(),
         updated_by_ID: user_id
+      },
+      $addToSet: {
+        phone: request.body.account_info.phone,
       }
     })
       .then(function(updatedAccount) {
@@ -777,6 +779,65 @@ app.get("/contact/view/:contactID", function(request, response) {
     response.status(400);
     console.log("There was an error looking for that account: ", error.stack);
   });
+});
+
+// ------------ Update Contact ---------- //
+app.put("/contact/update", function(request, response) {
+  let user_id = request.body.user_id;
+  let contact_id = request.body.contact_info._id;
+  console.log("This is the request sent from the front end: ", request.body);
+  console.log("This is the contact id: ", contact_id);
+
+
+  let newContact = new Contact({
+    salutation: request.body.contact_info.salutation,
+    first_name: request.body.contact_info.first_name,
+    last_name: request.body.contact_info.last_name,
+    email: request.body.contact_info.email,
+    phone: request.body.contact_info.phone,
+    address: request.body.contact_info.address,
+    address2: request.body.contact_info.address2,
+    city: request.body.contact_info.city,
+    state: request.body.contact_info.state,
+    zip_code: request.body.contact_info.zip_code,
+    description: request.body.contact_info.description,
+    account: request.body.contact_info.account,
+    ownerID: user_id,
+    created_at: new Date(),
+    created_by_ID: user_id
+  });
+
+
+  return Contact.update({
+      _id: contact_id
+    },
+    {
+      $set: {
+        salutation: request.body.contact_info.salutation,
+        first_name: request.body.contact_info.first_name,
+        last_name: request.body.contact_info.last_name,
+        email: request.body.contact_info.email,
+        phone: request.body.contact_info.phone,
+        address: request.body.contact_info.address,
+        address2: request.body.contact_info.address2,
+        city: request.body.contact_info.city,
+        state: request.body.contact_info.state,
+        zip_code: request.body.contact_info.zip_code,
+        description: request.body.contact_info.description,
+        updated_at: new Date(),
+        updated_by_ID: user_id
+      }
+    })
+      .then(function(updatedContact) {
+        console.log("Contact updated successfully: ", updatedContact);
+        response.json({
+          message: "Contact updated successfully"
+        });
+      })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error updating the contact: ", error.stack);
+    });
 });
 
 // --------- Add Account to Contact -------- //
