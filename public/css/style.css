@@ -56,13 +56,27 @@
 
 .user-name {
   margin-top: 50%;
-  margin-left: -35px;
+  margin-left: -30px;
 }
 
 .col-xs-12 {
   padding-left: 0;
 }
 
+
+/*
+ * Footer Styles
+ */
+footer {
+ 	background: #F4F4F4;
+ 	height: 90px;
+ 	color: #04519B;
+ 	font-weight: bold;
+ 	text-align: center;
+ 	padding-top: 30px;
+ 	margin-top: 30px;
+ 	border-top: 5px solid #04519B;
+}
 
 /*[class*="col-"]{
   padding-left: 0;
