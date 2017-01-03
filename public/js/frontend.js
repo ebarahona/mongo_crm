@@ -282,17 +282,18 @@ app.controller("HomeController", function($scope, $state, CRM_Factory) {
 //   };
 // });
 
-app.controller("RegisterController", function($scope, $state, CRM_Factory) {
-  console.log("I'm using the RegisterController");
-  $scope.user = {};
-  $scope.register = function() {
-    console.log("I clicked the register button");
-    var user_registration = $scope.user;
-    console.log("User registration: ", user_registration);
-    var image = $scope.user.profile_image;
-    console.log("Image: ", image);
-  };
-});
+// Need to update later to have the avatar upload
+// app.controller("RegisterController", function($scope, $state, CRM_Factory) {
+//   console.log("I'm using the RegisterController");
+//   $scope.user = {};
+//   $scope.register = function() {
+//     console.log("I clicked the register button");
+//     var user_registration = $scope.user;
+//     console.log("User registration: ", user_registration);
+//     var image = $scope.user.profile_image;
+//     console.log("Image: ", image);
+//   };
+// });
 
 app.controller("LoginController", function($scope, $state, $cookies, $rootScope, CRM_Factory) {
   $scope.user = {
@@ -331,7 +332,7 @@ app.controller("UsersController", function($scope, CRM_Factory) {
     });
 });
 
-app.controller("ViewUserController", function($scope, $stateParams, CRM_Factory) {
+app.controller("ViewUserController", function($scope, $stateParams, $rootScope, CRM_Factory) {
   var user_id = $stateParams.userID;
   console.log("user_id: ", user_id);
 

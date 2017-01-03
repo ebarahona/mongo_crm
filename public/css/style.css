@@ -36,12 +36,38 @@
 }
 
 .profile-details {
-  padding-left: 10px;
+  padding-left: 5px;
 }
 
 .profile-details li {
   list-style: none;
 }
+
+.details {
+  color: gray;
+  margin-top: 10px;
+}
+
+.details-info {
+  display: block;
+  margin-left: 22px;
+  color: black;
+}
+
+.user-name {
+  margin-top: 50%;
+  margin-left: -35px;
+}
+
+.col-xs-12 {
+  padding-left: 0;
+}
+
+
+/*[class*="col-"]{
+  padding-left: 0;
+}*/
+
 
 /*
  * avoid the undesirable flicker effect caused by the html template display
@@ -58,3 +84,20 @@
 @-moz-document url-prefix() {
   fieldset { display: table-cell; }
 }
+
+
+/*
+ * Media Queries
+ */
+
+ /* Small Devices, Tablets */
+ @media only screen and (max-width : 767px) {
+  .user-name {
+    margin-top: 10px;
+    font-size: 30px;
+  }
+
+  .col-xs-12 {
+    padding-left: 15px;
+  }
+ }
