@@ -46,7 +46,7 @@
                   </li>
                   <li>
                     <div ng-show="account.industry" class="details">
-                      <i class="fa fa-fa-industry fa-fw"></i> industry
+                      <i class="fa fa-industry fa-fw"></i> industry
                       <span class="details-info">
                         {{ account.industry }}
                       </span>
@@ -89,7 +89,9 @@
                       <i class="fa fa-envelope-o fa-fw"></i>
                       e-mail
                       <span class="details-info">
-                        {{ account.email }}
+                        <a href= "mailto:{{ account.email }}">
+                          {{ account.email }}
+                        </a>
                       </span>
                     </div>
                   </li>
@@ -98,7 +100,9 @@
                       address
                       <span class="details-info">
                         {{ account.address }}<br>
-                        {{ account.address2 }}<br>
+                        <span ng-show="account.address2">
+                          {{ account.address2 }}<br>
+                        </span>
                         {{ account.city }}, {{ account.state }} {{ account.zip_code }}
                       </span>
                     </div>
@@ -108,7 +112,9 @@
                       <i class="fa fa-user-o fa-fw"></i>
                       account owner
                       <span class="details-info">
-                        {{ account_owner.salutation }} {{ account_owner.first_name }} {{ account_owner.last_name }}
+                        <a ui-sref="view_user({userID: account.ownerID})">
+                          {{ account_owner.salutation }} {{ account_owner.first_name }} {{ account_owner.last_name }}
+                        </a>
                       </span>
                     </div>
                   </li>

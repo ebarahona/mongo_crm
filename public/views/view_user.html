@@ -23,7 +23,7 @@
 
       			<div class="col-xs-12">
 
-              <div class="col-xs-6 col-sm-12">
+              <div class="col-xs-6 col-sm-12 padding-left">
                 <h4 class="information">General Information</h4>
         				<ul class="profile-details">
                   <li ng-show="user.username">
@@ -63,7 +63,7 @@
         				</ul>
               </div>
 
-              <div class="col-xs-6 col-sm-12">
+              <div class="col-xs-6 col-sm-12 padding-left">
                 <h4 class="information">User Information</h4>
                 <ul class="profile-details">
                   <li>
@@ -89,7 +89,9 @@
                       <i class="fa fa-envelope-o fa-fw"></i>
                       e-mail
                       <span class="details-info">
-                        {{ user.email }}
+                        <a href= "mailto:{{ user.email }}">
+                          {{ user.email }}
+                        </a>
                       </span>
                     </div>
                   </li>

@@ -24,7 +24,7 @@
 
       			<div class="col-xs-12">
 
-              <div class="col-xs-6 col-sm-12">
+              <div class="col-xs-6 col-sm-12 padding-left">
                 <h4 class="information">General Information</h4>
         				<ul class="profile-details">
         					<li>
@@ -55,7 +55,7 @@
         				</ul>
               </div>
 
-              <div class="col-xs-6 col-sm-12">
+              <div class="col-xs-6 col-sm-12 padding-left">
                 <h4 class="information">Contact Information</h4>
                 <ul class="profile-details">
                   <li>
@@ -81,7 +81,9 @@
                       <i class="fa fa-envelope-o fa-fw"></i>
                       e-mail
                       <span class="details-info">
-                        {{ contact.email }}
+                        <a href= "mailto:{{ contact.email }}">
+                          {{ contact.email }}
+                        </a>
                       </span>
                     </div>
                   </li>
@@ -90,17 +92,21 @@
                       address
                       <span class="details-info">
                         {{ contact.address }}<br>
-                        {{ contact.address2 }}<br>
+                        <span ng-show="account.address2">
+                          {{ account.address2 }}<br>
+                        </span>
                         {{ contact.city }}, {{ contact.state }} {{ contact.zip_code }}
                       </span>
                     </div>
                   </li>
-                  <li>
+                  <li ng-show="contact.ownerID">
                     <div class="details">
                       <i class="fa fa-user-o fa-fw"></i>
                       contact owner
                       <span class="details-info">
-                        {{ contact.ownerID }}
+                        <a ui-sref="view_user({userID: contact.ownerID})">
+                          {{ contact_owner.salutation }} {{ contact_owner.first_name }} {{ contact_owner.last_name }}
+                        </a>
                       </span>
                     </div>
                   </li>

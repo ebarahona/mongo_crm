@@ -703,10 +703,21 @@ app.get("/contact/view/:contactID", function(request, response) {
       .then(function(accounts) {
         console.log("\nHere is the contact: ", contact);
         console.log("\nHere are the accounts: ", accounts);
-        response.json({
-          contact: contact,
-          contact_accounts: accounts
-        });
+        return User.find({
+          _id: contact.ownerID
+        })
+          .then(function(user) {
+            console.log("\nHere is the user: ", user);
+            response.json({
+              contact: contact,
+              contact_accounts: accounts,
+              user: user
+            });
+          })
+          .catch(function(error) {
+            response.status(400);
+            console.log("There was an error looking for that account: ", error.stack);
+          });
       })
       .catch(function(error) {
         response.status(400);

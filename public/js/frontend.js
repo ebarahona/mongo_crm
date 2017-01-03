@@ -336,6 +336,9 @@ app.controller("ViewUserController", function($scope, $stateParams, $rootScope, 
   var user_id = $stateParams.userID;
   console.log("user_id: ", user_id);
 
+  // Scroll to top when loading page (need this when coming from another page)
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+
   CRM_Factory.viewUser(user_id)
     .then(function(user) {
       console.log("Here's the user: ", user);
@@ -487,8 +490,10 @@ app.controller("ViewContactController", function($scope, $stateParams, CRM_Facto
     console.log("\n\nThis is the contact_info: ", contact_info);
     $scope.contact = contact_info.data.contact;
     $scope.contact_accounts = contact_info.data.contact_accounts;
+    $scope.contact_owner = contact_info.data.user[0];
     console.log("\nThe contact: ", $scope.contact);
     console.log("\nThe accounts: ", $scope.contact_accounts);
+    console.log("\nThe contact owner: ", $scope.contact_owner);
   })
   .catch(function(error) {
     console.log("There was an error!!!", error);
