@@ -1,4 +1,4 @@
-var app = angular.module("crm_app", ["ui.router", "ngCookies", "ngTouch", "ngAnimate", "ui.bootstrap"]);
+var app = angular.module("crm_app", ["ui.router", "ngCookies", "ngTouch", "ngAnimate", "ui.bootstrap", "ngFileUpload"]);
 
 
 ////////////////
@@ -261,26 +261,26 @@ app.controller("HomeController", function($scope, $state, CRM_Factory) {
 
 
 //////////// USER-SPECIFIC CONTROLLERS ///////////
-// app.controller("RegisterController", function($scope, $state, CRM_Factory) {
-//   // console.log("I'm using the RegisterController");
-//   $scope.user = {};
-//   $scope.register = function() {
-//     // var user_registration = $scope.user;
-//     var user_registration = $scope.user;
-//     var password2 = $scope.user.password2;
-//     console.log("password2", password2);
-//     console.log("user_registration: ", user_registration);
-//     delete user_registration.password2;
-//     CRM_Factory.register(user_registration)
-//       .then(function(success) {
-//         console.log("We were successful: ", success);
-//         $state.go("login");
-//       })
-//       .catch(function(error) {
-//         console.log("There was an error!!!", error.stack);
-//       });
-//   };
-// });
+app.controller("RegisterController", function($scope, $state, CRM_Factory) {
+  // console.log("I'm using the RegisterController");
+  $scope.user = {};
+  $scope.register = function() {
+    // var user_registration = $scope.user;
+    var user_registration = $scope.user;
+    var password2 = $scope.user.password2;
+    console.log("password2", password2);
+    console.log("user_registration: ", user_registration);
+    delete user_registration.password2;
+    CRM_Factory.register(user_registration)
+      .then(function(success) {
+        console.log("We were successful: ", success);
+        $state.go("login");
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+});
 
 // Need to update later to have the avatar upload
 // app.controller("RegisterController", function($scope, $state, CRM_Factory) {

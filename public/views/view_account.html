@@ -121,11 +121,11 @@
                 </ul>
               </div>
 
-              <div class="col-xs-12 padding-left">
+              <div ng-if="account.contacts.length > 0" class="col-xs-12 padding-left">
                 <h4 class="information">Contacts Information</h4>
 
                 <ul class="profile-details">
-                  <li ng-show="account.contacts">
+                  <li>
                     <div class="details">
                       <i class="fa fa-building-o fa-fw"></i> contacts
                       <span class="details-info">
