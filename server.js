@@ -16,7 +16,19 @@ const passport = require('passport');                           // not currently
 const LocalStrategy = require('passport-local').Strategy;       // not currently used
 // Node.js middleware for handling multipart/form-data, which is primarily used for uploading files
 const multer = require('multer');
-const upload = multer({dest: './uploads'}); // Handle file uploads
+// const upload = multer({dest: './uploads'}); // Handle file uploads
+
+const storage = multer.diskStorage({
+  destination: function (request, file, callback) {
+    callback(null, './uploads');
+  },
+  filename: function (request, file, callback) {
+    callback(null, file.fieldname + '-' + Date.now());
+  }
+});
+
+const upload = multer({ storage: storage });
+
 // Used for flash messages
 const flash = require('connect-flash');
 // Used to validate forms before submitting
@@ -282,9 +294,17 @@ const Call = mongoose.model("Call", {
 
 //////////////// USER ROUTES /////////////
 // ----------- Register User ---------- //
-app.post("/users/register", function(request, response) {
+app.post("/users/register", upload.single("profileimage"), function(request, response) {
   console.log("Here is the registration information: ", request.body);
   let password = request.body.password;
+
+  if (request.file) {
+    console.log("Uploading file...");
+    let profileimage = request.file.filename;
+  } else {
+    console.log("No file uploaded...");
+    profileimage = "noimage.jpg";
+  }
 
   bcrypt.hash(password, saltRounds)
     .then(function(hash) {
@@ -294,7 +314,8 @@ app.post("/users/register", function(request, response) {
         last_name: request.body.last_name,
         username: request.body.username,
         email: request.body.email,
-        password: hash
+        password: hash,
+        profileimage: profileimage
       });
 
       newRegistration.save()
@@ -386,6 +407,27 @@ app.get("/users", function(request, response) {
       response.status(401) ;
       response.json({
         message: "There was an error getting the users"
+      });
+    });
+});
+
+// ------------- Show User ----------- //
+app.get("/user/:userID", function(request, response) {
+  let userID = request.params.userID;
+  console.log("I'm in the backend with: ", userID);
+
+  User.find({ _id: userID })
+    .then(function(user) {
+      console.log(" \n\nHere is the user: ", user);
+      response.json({
+        user: user
+      });
+    })
+    .catch(function(error) {
+      console.log("There was an error getting the user");
+      response.status(401) ;
+      response.json({
+        message: "There was an error getting the user"
       });
     });
 });
