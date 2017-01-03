@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<div class="container">
+  <div class="row">
+    <h4><a ui-sref="accounts">Accounts </a>&gt;&gt; {{ account.name }}</h4>
+
+    <hr>
+  </div>
+  <div class="row">
+    <form class="form-horizontal">
+      <fieldset>
+        <div class="form-group">
+          <label for="name" class="col-lg-2 control-label">Name</label>
+          <div class="col-lg-8">
+            <input ng-model="account.name" name="name" type="text" class="form-control" id="name" placeholder="Name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="website" class="col-lg-2 control-label">Website</label>
+          <div class="col-lg-8">
+            <input ng-model="account.website" name="website" type="text" class="form-control" id="website" placeholder="Website">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email" class="col-lg-2 control-label">Email</label>
+          <div class="col-lg-8">
+            <input ng-model="account.email" name="email" type="text" class="form-control" id="email" placeholder="Email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="phone" class="col-lg-2 control-label">Phone</label>
+          <div class="col-lg-8">
+            <input ng-model="account.phone" name="phone" type="text" class="form-control" id="phone" placeholder="Phone">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="address" class="col-lg-2 control-label">Address Line 1</label>
+          <div class="col-lg-8">
+            <input ng-model="account.address" name="address" type="text" class="form-control" id="address" placeholder="Address Line 1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="address2" class="col-lg-2 control-label">Address Line 2 (optional)</label>
+          <div class="col-lg-8">
+            <input ng-model="account.address2" name="address2" type="text" class="form-control" id="address2" placeholder="Address Line 2 (optional)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="city" class="col-lg-2 control-label">City</label>
+          <div class="col-lg-8">
+            <input ng-model="account.city" name="city" type="text" class="form-control" id="city" placeholder="City">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="state" class="col-lg-2 control-label">State</label>
+          <div class="col-lg-8">
+            <input ng-model="account.state" name="state" type="text" class="form-control" id="state" placeholder="State">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="zip_code" class="col-lg-2 control-label">Zip Code</label>
+          <div class="col-lg-8">
+            <input ng-model="account.zip_code" name="zip_code" type="text" class="form-control" id="zipCode" placeholder="Zip Code">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="select" class="col-lg-2 control-label">Type</label>
+          <div class="col-lg-8">
+            <select ng-model="account.type" name="type" class="form-control" id="type">
+              <option disabled selected value> -- select an option -- </option>
+              <option>Customer</option>
+              <option>Partner</option>
+              <option>Reseller</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="select" class="col-lg-2 control-label">Industry</label>
+          <div class="col-lg-8">
+            <select ng-model="account.industry" name="industry" class="form-control" id="industry">
+              <option disabled selected value> -- select an option -- </option>
+              <option>Agriculture</option>
+              <option>Apparel</option>
+              <option>Banking</option>
+              <option>Biotechnology</option>
+              <option>Chemicals</option>
+              <option>Communications</option>
+              <option>Construction</option>
+              <option>Consulting</option>
+              <option>Education</option>
+              <option>Electronics</option>
+              <option>Energy</option>
+              <option>Engineering</option>
+              <option>Entertainment</option>
+              <option>Environmental</option>
+              <option>Food &amp; Beverage</option>
+              <option>Government</option>
+              <option>Hospitality</option>
+              <option>Insurance</option>
+              <option>Machinery</option>
+              <option>Manufacturing</option>
+              <option>Media</option>
+              <option>Not for Profit</option>
+              <option>Recreation</option>
+              <option>Retail</option>
+              <option>Shipping</option>
+              <option>Technology</option>
+              <option>Telecommunications</option>
+              <option>Transportation</option>
+              <option>Utilities</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="contacts_search" class="col-lg-2 control-label">Contacts Search</label>
+          <div class="col-lg-8">
+            <input ng-model="account.contacts_search" ng-keydown="searchContacts($event)" name="contacts_search" type="text" class="form-control" id="contacts_search" placeholder="Contacts Search">
+          </div>
+        </div>
+
+        <table class="table table-responsive table-hover ">
+          <tbody>
+            <tr ng-repeat="contact in contacts">
+              <td ng-click="addContactToAccount(contact._id, account._id)">{{ contact.first_name }} {{ contact.last_name }} - {{ contact._id }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="form-group">
+          <label for="contacts" class="col-lg-2 control-label">Contacts</label>
+          <div class="col-lg-8">
+            <!-- {{ account_contacts }} -->
+            <span ng-repeat="account_contact in account_contacts">
+              <a ui-sref="view_contact({contactID: account_contact._id})">{{ account_contact.first_name }} {{ account_contact.last_name }}</a>,
+            </span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="description" class="col-lg-2 control-label">Description</label>
+          <div class="col-lg-8">
+            <textarea ng-model="account.description" name="description" id="description" rows="8" cols="80" placeholder="Description"></textarea>
+          </div>
+        </div>
+
+        <!-- Not currently working. Uncomment after fixing -->
+        <!-- <div class="form-group">
+          <label for="account_image" class="col-lg-2 control-label">Account Image</label>
+          <div class="col-lg-8">
+            <input ng-model="account.account_image" name="account_image" type="file" class="form-control" id="account_image" placeholder="Account Image">
+          </div>
+        </div> -->
+      </fieldset>
+    </form>
+  </div>
+</div>
