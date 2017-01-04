@@ -302,6 +302,34 @@ const Call = mongoose.model("Call", {
   }
 });
 
+//////////////// COMMENTS ///////////////////
+const Comment = mongoose.model("Comment", {
+  text: {
+    type: String
+  },
+  account: {
+    type: mongoose.Schema.Types.ObjectId
+  },
+  created_at: {
+    type: Date,
+    default: Date.now,
+    required: true
+  },
+  created_by_ID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  updated_at: {                   // Ability to update comments not currently implemented
+    type: Date,
+    default: Date.now
+  },
+  updated_by_ID: {                // Ability to update comments not currently implemented
+    type: mongoose.Schema.Types.ObjectId
+  }
+});
+
+
+
 
 
 
@@ -1021,6 +1049,88 @@ app.get("/call/view/:callID", function(request, response) {
     console.log("There was an error looking for that account: ", error.stack);
   });
 });
+
+
+////////////// COMMENT ROUTES /////////////
+// ----------- Create Comment ---------- //
+app.post("/comments/create", function(request, response) {
+  let user_id = request.body.user_id;
+  console.log("This is the request sent from the front end: ", request.body);
+
+  let newComment = new Comment({
+    text: request.body.comment_text,
+    account: request.body.account_id,
+    created_by_ID: user_id
+  });
+
+  newComment.save()
+    .then(function(result) {
+      response.json({
+        message: "Comment created successfully"
+      })
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("\n\n\n");
+      console.log("Didn't create account because: ", error);
+    });
+
+});
+
+// ---------- Show Comments For An Account ---------- //
+app.get("/comments/view/:accountID", function(request, response) {
+  let accountID = request.params.accountID;
+  console.log("I'm in the backend with this accountID: ", accountID);
+
+  Comment.find({
+    account: accountID
+  })
+    .then(function(comments) {
+      console.log("\n\n\nAll comments: \n\n", comments);
+      response.json({
+        comments: comments
+      })
+    })
+    .then(function(error) {
+      response.status(400);
+      console.log("Error finding comments for account: ", error);
+    })
+
+  // Call.findById(accountID)
+  // .then(function(comments) {
+  //   console.log("This is the comments: ", comments);
+  //   response.json({
+  //     comments: comments
+  //   })
+  //   let comments_account_IDs = comments.account;
+  //   console.log("Here are the account IDs: ", comments_account_IDs);
+  //
+  //   return Account.find({
+  //     _id: {
+  //       $in: comments_account_IDs
+  //     }
+  //   })
+  //     .then(function(accounts) {
+  //       console.log("\nHere is the comments: ", comments);
+  //       console.log("\nHere are the accounts: ", accounts);
+  //       response.json({
+  //         comments: comments,
+  //         contact_accounts: accounts
+  //       });
+  //     })
+  //     .catch(function(error) {
+  //       response.status(400);
+  //       console.log("There was an error looking for the information: ", error.stack);
+  //     });
+  // })
+  // .catch(function(error) {
+  //   response.status(400);
+  //   console.log("There was an error looking for that account: ", error.stack);
+  // });
+});
+
+
+
 
 
 

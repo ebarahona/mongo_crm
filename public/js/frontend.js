@@ -100,7 +100,7 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 
   // View account
   service.viewAccount = function(accountID) {
-    console.log("I'm in the factory to view: ", accountID);
+    // console.log("I'm in the factory to view: ", accountID);
     return $http({
       method: "GET",
       url: "/account/view/" + accountID,
@@ -218,7 +218,7 @@ service.addAccountToContact = function(accountID, contactID) {
 
 
 ////////////////////////////////////////////////////////////
-///////////////////// CALL SERVICES /////////////////////
+///////////////////// CALL SERVICES ///////////////////////
 ////////////////////////////////////////////////////////////
 
 // Create call
@@ -254,6 +254,30 @@ service.viewCall = function(callID) {
   });
 };
 
+
+////////////////////////////////////////////////////////////
+///////////////////// COMMENT SERVICES /////////////////////
+////////////////////////////////////////////////////////////
+service.saveComment = function(comment, accountID) {
+  var user_id = $rootScope.user._id;
+  return $http({
+    method: "POST",
+    url: "/comments/create",
+    data: {
+      user_id: user_id,
+      comment_text: comment,
+      account_id: accountID
+    }
+  });
+};
+
+service.viewComments = function(accountID) {
+  console.log("I got an account_id in the factory: ", accountID);
+  return $http({
+    method: "GET",
+    url: "/comments/view/" + accountID,
+  });
+};
 
 
 ////////////////////////////////////////////////////////////
@@ -366,7 +390,7 @@ app.controller("ViewUserController", function($scope, $state, $stateParams, $roo
   // Scroll to top when loading page (need this when coming from another page)
   document.body.scrollTop = document.documentElement.scrollTop = 0;
 
-  $state.go("view_user.notes");
+  $state.go("view_user.comments");
 
   CRM_Factory.viewUser(user_id)
     .then(function(user) {
@@ -377,6 +401,7 @@ app.controller("ViewUserController", function($scope, $state, $stateParams, $roo
       console.log("There was an error!!!", error);
     });
 });
+
 
 //////////// ACCOUNT-SPECIFIC CONTROLLERS ///////////
 app.controller("CreateAccountController", function($scope, $state, CRM_Factory) {
@@ -418,12 +443,12 @@ app.controller("ViewAccountController", function($scope, $stateParams, $state, C
   var account_id = $stateParams.accountID;
 
   console.log("I'm in the ViewAccountController");
-  console.log("stateParams", $stateParams);
+  // console.log("stateParams", $stateParams);
 
   // Scroll to top when loading page (need this when coming from a contact)
   document.body.scrollTop = document.documentElement.scrollTop = 0;
 
-  $state.go("view_account.notes");
+  $state.go("view_account.comments");
 
   CRM_Factory.viewAccount(account_id)
     .then(function(account_info) {
@@ -431,9 +456,9 @@ app.controller("ViewAccountController", function($scope, $stateParams, $state, C
       $scope.account = account_info.data.account;
       $scope.account_contacts = account_info.data.account_contacts;
       $scope.account_owner = account_info.data.user[0];
-      console.log("\nThe account: ", $scope.account);
-      console.log("\nThe contacts: ", $scope.account_contacts);
-      console.log("\nThe account owner: ", $scope.account_owner);
+      // console.log("\nThe account: ", $scope.account);
+      // console.log("\nThe contacts: ", $scope.account_contacts);
+      // console.log("\nThe account owner: ", $scope.account_owner);
     })
     .catch(function(error) {
       console.log("There was an error!!!", error);
@@ -540,6 +565,51 @@ app.controller("EditAccountController", function($scope, $stateParams, $state, C
   };
 });
 
+
+//////////// COMMENT-SPECIFIC CONTROLLERS ///////////
+app.controller("AccountCommentsController", function($scope, $state, $stateParams, CRM_Factory) {
+  var account_id = $stateParams.accountID;
+  console.log("Account ID: ", account_id);
+
+  CRM_Factory.viewComments(account_id)
+    .then(function(comments) {
+      console.log("Comments for account: ", comments);
+      $scope.comments = comments.data.comments;
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error.stack);
+    });
+
+  $scope.saveComment = function() {
+    var comment = $scope.comment;
+    var account_id = $scope.account._id;
+    console.log("Comment after clicking the save button: ", comment);
+    console.log("Account id: ", account_id);
+    CRM_Factory.saveComment(comment, account_id)
+      .then(function(success) {
+        $scope.comment = "";
+        // Request all comments from the database
+        $scope.reload();
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+
+  $scope.reload = function() {
+    CRM_Factory.viewComments(account_id)
+      .then(function(comments) {
+        console.log("Comments for account: ", comments);
+        $scope.comments = comments.data.comments;
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+
+});
+
+
 //////////// CONTACT-SPECIFIC CONTROLLERS ///////////
 app.controller("CreateContactController", function($scope, $state, CRM_Factory) {
   console.log("I'm using the CreateContactController.  Yay!");
@@ -585,7 +655,7 @@ app.controller("ViewContactController", function($scope, $state, $stateParams, C
 
   // Scroll to top when loading page (need this when coming from an account)
   document.body.scrollTop = document.documentElement.scrollTop = 0;
-  $state.go("view_contact.notes");
+  $state.go("view_contact.comments");
 
   CRM_Factory.viewContact(contact_id)
   .then(function(contact_info) {
@@ -894,8 +964,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: "ViewUserController"
   })
   .state({
-    name: "view_user.notes",
-    url: "/notes",
+    name: "view_user.comments",
+    url: "/comments",
     templateUrl: "views/users.html"
   })
   .state({
@@ -922,9 +992,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: "ViewAccountController"
   })
   .state({
-    name: "view_account.notes",
-    url: "/notes",
-    templateUrl: "views/accounts.html"
+    name: "view_account.comments",
+    url: "/comments",
+    templateUrl: "views/account/account_comments.html",
+    controller: "AccountCommentsController"
   })
   .state({
     name: "view_account.calls",
@@ -956,8 +1027,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: "ViewContactController"
   })
   .state({
-    name: "view_contact.notes",
-    url: "/notes",
+    name: "view_contact.comments",
+    url: "/comments",
     templateUrl: "views/contacts.html"
   })
   .state({
