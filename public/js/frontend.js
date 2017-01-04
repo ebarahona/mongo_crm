@@ -976,7 +976,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "accounts",
     url: "/Accounts",
-    templateUrl: "views/accounts.html",
+    templateUrl: "views/account/accounts.html",
     controller: "AccountsController"
   })
   .state({
@@ -988,7 +988,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_account",
     url: "/Account/view/{accountID}",
-    templateUrl: "views/view_account.html",
+    templateUrl: "views/account/view_account.html",
     controller: "ViewAccountController"
   })
   .state({
@@ -1000,7 +1000,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_account.calls",
     url: "/calls",
-    templateUrl: "views/view_account.html"
+    templateUrl: "views/account/view_account.html"
   })
   .state({
     name: "edit_account",
