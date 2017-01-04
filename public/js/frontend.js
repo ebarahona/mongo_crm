@@ -359,12 +359,14 @@ app.controller("UsersController", function($scope, CRM_Factory) {
     });
 });
 
-app.controller("ViewUserController", function($scope, $stateParams, $rootScope, CRM_Factory) {
+app.controller("ViewUserController", function($scope, $state, $stateParams, $rootScope, CRM_Factory) {
   var user_id = $stateParams.userID;
   console.log("user_id: ", user_id);
 
   // Scroll to top when loading page (need this when coming from another page)
   document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+  $state.go("view_user.notes");
 
   CRM_Factory.viewUser(user_id)
     .then(function(user) {
@@ -412,14 +414,17 @@ app.controller("AccountsController", function($scope, $rootScope, $state, CRM_Fa
     });
 });
 
-app.controller("ViewAccountController", function($scope, $stateParams, CRM_Factory) {
+app.controller("ViewAccountController", function($scope, $stateParams, $state, CRM_Factory) {
+  var account_id = $stateParams.accountID;
+
   console.log("I'm in the ViewAccountController");
   console.log("stateParams", $stateParams);
 
   // Scroll to top when loading page (need this when coming from a contact)
   document.body.scrollTop = document.documentElement.scrollTop = 0;
 
-  var account_id = $stateParams.accountID;
+  $state.go("view_account.notes");
+
   CRM_Factory.viewAccount(account_id)
     .then(function(account_info) {
       console.log("\n\nThis is the account_info: ", account_info);
@@ -572,14 +577,15 @@ app.controller("ContactsController", function($scope, $rootScope, $state, CRM_Fa
     });
 });
 
-app.controller("ViewContactController", function($scope, $stateParams, CRM_Factory) {
+app.controller("ViewContactController", function($scope, $state, $stateParams, CRM_Factory) {
+  var contact_id = $stateParams.contactID;
+
   console.log("I'm inside the ViewContactController");
   console.log("stateParams", $stateParams);
 
   // Scroll to top when loading page (need this when coming from an account)
   document.body.scrollTop = document.documentElement.scrollTop = 0;
-
-  var contact_id = $stateParams.contactID;
+  $state.go("view_contact.notes");
 
   CRM_Factory.viewContact(contact_id)
   .then(function(contact_info) {
@@ -888,13 +894,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: "ViewUserController"
   })
   .state({
-    name: "view_user.home",
-    url: "/Users/view",
+    name: "view_user.notes",
+    url: "/notes",
     templateUrl: "views/users.html"
   })
   .state({
-    name: "view_user.profile",
-    url: "/Users/view",
+    name: "view_user.calls",
+    url: "/calls",
     templateUrl: "views/view_user.html"
   })
   .state({
@@ -914,6 +920,16 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Account/view/{accountID}",
     templateUrl: "views/view_account.html",
     controller: "ViewAccountController"
+  })
+  .state({
+    name: "view_account.notes",
+    url: "/notes",
+    templateUrl: "views/accounts.html"
+  })
+  .state({
+    name: "view_account.calls",
+    url: "/calls",
+    templateUrl: "views/view_account.html"
   })
   .state({
     name: "edit_account",
@@ -938,6 +954,16 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Contact/view/{contactID}",
     templateUrl: "views/view_contact.html",
     controller: "ViewContactController"
+  })
+  .state({
+    name: "view_contact.notes",
+    url: "/notes",
+    templateUrl: "views/contacts.html"
+  })
+  .state({
+    name: "view_contact.calls",
+    url: "/calls",
+    templateUrl: "views/view_contact.html"
   })
   .state({
     name: "edit_contact",

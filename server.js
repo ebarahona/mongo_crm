@@ -588,6 +588,7 @@ app.put("/account/update", function(request, response) {
         name: request.body.account_info.name,
         email: request.body.account_info.email,
         website: request.body.account_info.website,
+        phone: request.body.account_info.phone,
         address: request.body.account_info.address,
         address2: request.body.account_info.address2,
         city: request.body.account_info.city,
@@ -598,10 +599,11 @@ app.put("/account/update", function(request, response) {
         description: request.body.account_info.description,
         updated_at: new Date(),
         updated_by_ID: user_id
-      },
-      $addToSet: {
-        phone: request.body.account_info.phone,
       }
+      // Not currently working.  Need to figure this out later.  Will make phone number a string for now
+      // $addToSet: {
+      //   phone: request.body.account_info.phone,
+      // }
     })
       .then(function(updatedAccount) {
         console.log("Account updated successfully: ", updatedAccount);
