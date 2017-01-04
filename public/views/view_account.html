@@ -15,7 +15,7 @@
   </div>
 
   <div class="row">
-    <div class="col-lg-10 col-sm-11 ">
+    <div class="col-sm-12">
 
       <div class="row profile">
 
@@ -154,17 +154,21 @@
 
           <ul class="nav nav-pills">
             <li role="presentation" class="active">
-              <a ui-sref="view_user.home">User Home</a>
+              <a ui-sref="view_account.comments">Comments</a>
             </li>
             <li role="presentation">
-              <a ui-sref="view_user.profile">User Profile</a>
+              <a ui-sref="view_account.calls">Calls</a>
             </li>
             <li role="presentation">
               <a href="#">Messages</a>
             </li>
           </ul>
 
-          <ui-view></ui-view>
+          <div class="container-fluid">
+            <div class="nested-view">
+              <ui-view></ui-view>
+            </div>
+          </div>
 
 
 

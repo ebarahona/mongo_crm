@@ -14,6 +14,16 @@
   font-weight: bold;
 }
 
+/* Textarea fields */
+textarea {
+  width: 100%;
+}
+
+/* Nested views */
+.nested-view {
+  margin-top: 35px;
+}
+
 
 /*
  * Navigation Bar Styles
@@ -27,6 +37,13 @@
  * Profile Styles
  */
 .profile-image {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.avatar-image {
+  width: 40px;
+  length 40px;
   width: 100%;
   border-radius: 5px;
 }
