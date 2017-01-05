@@ -673,6 +673,48 @@ app.controller("AccountCommentsController", function($scope, $state, $stateParam
 
 });
 
+app.controller("ContactCommentsController", function($scope, $state, $stateParams, CRM_Factory) {
+  var contact_id = $stateParams.contactID;
+  console.log("Contact ID: ", contact_id);
+
+  CRM_Factory.viewComments(contact_id)
+    .then(function(comments) {
+      console.log("Comments for contact: ", comments);
+      $scope.comments = comments.data.comments;
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error.stack);
+    });
+
+  $scope.saveComment = function() {
+    var comment = $scope.comment;
+    var contact_id = $scope.contact._id;
+    console.log("Comment after clicking the save button: ", comment);
+    console.log("Contact id: ", contact_id);
+    CRM_Factory.saveComment(comment, contact_id)
+      .then(function(success) {
+        $scope.comment = "";
+        // Request all comments from the database
+        $scope.reload();
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+
+  $scope.reload = function() {
+    CRM_Factory.viewComments(contact_id)
+      .then(function(comments) {
+        console.log("Comments for contact: ", comments);
+        $scope.comments = comments.data.comments;
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+
+});
+
 
 //////////// CONTACT-SPECIFIC CONTROLLERS ///////////
 app.controller("CreateContactController", function($scope, $state, CRM_Factory) {
@@ -1099,7 +1141,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_contact.comments",
     url: "/comments",
-    templateUrl: "views/contacts.html"
+    templateUrl: "views/contact/contact_comments.html",
+    controller: "ContactCommentsController"
   })
   .state({
     name: "view_contact.calls",
