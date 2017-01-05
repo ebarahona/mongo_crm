@@ -1,13 +1,19 @@
 <!DOCTYPE html>
-<!-- start: Content -->
+
 <div class="container">
   <div class="row">
     <div class="col-lg-12">
       <h4><a ui-sref="users">Users </a>&gt;&gt; {{ user.salutation }} {{ user.first_name }} {{ user.last_name }}</h4>
+    </div>
+  </div>
 
+  <div class="row">
+    <div class="col-lg-12">
+      <button ui-sref="edit_user({userID: user._id})" class="btn btn-primary btn-sm" type="button" name="edit_btn">Edit</button>
       <hr>
     </div>
   </div>
+
   <div class="row">
     <div class="col-lg-10 col-sm-11 ">
 
@@ -18,7 +24,8 @@
       		<div class="row">
 
       			<div class="col-sm-12">
-      				<img class="profile-image" src="https://scontent-atl3-1.xx.fbcdn.net/v/t1.0-9/306403_10100476043786240_1926977104_n.jpg?oh=7a4808bf31016f0a6dbc27cd7166ce48&oe=58E3CE4D">
+              <img ng-show="user.profileimage" class="profile-image" ng-src="./uploads/{{ user.profileimage }}">
+              <img ng-hide="user.profileimage" class="profile-image" ng-src="./uploads/default-avatar.png">
       			</div>
 
       			<div class="col-xs-12">

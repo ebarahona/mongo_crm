@@ -14,20 +14,6 @@ const bodyParser = require('body-parser');
 // Authentication middleware for Node.js
 const passport = require('passport');                           // not currently used
 const LocalStrategy = require('passport-local').Strategy;       // not currently used
-// Node.js middleware for handling multipart/form-data, which is primarily used for uploading files
-const multer = require('multer');
-// const upload = multer({dest: './uploads'}); // Handle file uploads
-
-const storage = multer.diskStorage({
-  destination: function (request, file, callback) {
-    callback(null, './uploads');
-  },
-  filename: function (request, file, callback) {
-    callback(null, file.fieldname + '-' + Date.now());
-  }
-});
-
-const upload = multer({ storage: storage });
 
 // Used for flash messages
 const flash = require('connect-flash');
@@ -38,6 +24,23 @@ const uuidV4 = require('uuid/v4');
 // Used to encrypt passwords
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+// Node.js middleware for handling multipart/form-data, which is primarily used for uploading files
+const multer = require('multer');
+// const upload = multer({dest: './uploads'}); // Handle file uploads
+
+const storage = multer.diskStorage({
+  destination: function (request, file, callback) {
+    callback(null, './public/uploads');
+  },
+  filename: function (request, file, callback) {
+    console.log('File looks like:', file);
+    const ext = path.extname(file.originalname);
+    const id = uuidV4();
+    callback(null, id + ext);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 var app = express();
 
@@ -102,6 +105,46 @@ const User = mongoose.model("User", {
   },
   token: {
     type: String
+  },
+  updated_at: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+////////////// USER PROFILE IMAGE MODEL ///////////////
+const ProfileImage = mongoose.model("ProfileImage", {
+  filename: {
+    type: String,
+    index: true
+  },
+  original_name: {
+    type: String
+  },
+  mimetype: {
+    type: String
+  },
+  destination: {
+    type: String
+  },
+  path: {
+    type: String
+  },
+  size: {
+    type: String
+  },
+  extension: {
+    type: String
+  },
+  file_type: {
+    type: String
+  },
+  user_id: {
+    type: String
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
   }
 });
 
@@ -381,6 +424,92 @@ app.post("/users/register", upload.single("profileimage"), function(request, res
       });
     });
 });
+
+// ------ Upload User Profile Image ------ //
+app.post("/upload_profile_image/:userID", upload.single("file"), function(request, response) {
+  let user_id = request.params.userID;
+
+  let myFile = request.file;
+  console.log('this is the file:', myFile);
+
+  let filename = myFile.filename;
+
+  let extension = myFile.originalname.split(".").pop();
+  let allImages = ["png", "jpg", "jpeg", "bmp", "tiff", "gif", "tiff"];
+
+  if (allImages.indexOf(extension.toLowerCase()) > -1) {
+    let file_type = "image";
+
+    let newProfileImage = new ProfileImage({
+      filename: filename,
+      original_name: myFile.originalname,
+      mimetype: myFile.mimetype,
+      destination: myFile.destination,
+      path: myFile.path,
+      size: myFile.size,
+      extension: extension,
+      file_type: file_type,
+      user_id: user_id
+    });
+
+    let queryUser = { _id: user_id };
+
+    newProfileImage.save()
+      .then(function(image) {
+
+        User.findOneAndUpdate(queryUser, {
+          $set: {
+            profileimage: filename
+          }
+        })
+          .then(function(user) {
+            console.log("\n\nSaved successfully: ", image);
+            console.log("\n\nThis is the user!", user);
+            response.json({
+              message: "Image uploaded and user updated successfully"
+            });
+          });
+      })
+      .catch(function(error) {
+        console.log("Didn't save because: ", error.stack);
+      });
+  } else {
+    return response.json({
+      message: "File is unsupported. Please choose a file with one of the following extensions: png, jpg, txt, jpeg, bmp, tiff, gif, tif."
+    });
+  }
+
+});
+
+// ------------ Update User ---------- //
+app.put("/user/update", function(request, response) {
+  let user_id = request.body.user_info._id;
+
+  return User.update({
+      _id: user_id
+    },
+    {
+      $set: {
+        salutation: request.body.user_info.salutation,
+        first_name: request.body.user_info.first_name,
+        last_name: request.body.user_info.last_name,
+        email: request.body.user_info.email
+      }
+    })
+      .then(function(updatedUser) {
+        console.log("User updated successfully: ", updatedUser);
+        response.json({
+          message: "User updated successfully"
+        });
+      })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error updating the user: ", error.stack);
+    });
+
+});
+
+
 
 // ----------- Login User ---------- //
 app.post("/users/login", function(request, response) {
@@ -693,7 +822,7 @@ app.post("/contacts/create", function(request, response) {
   let user_id = request.body.user_id;
   console.log("This is the request sent from the front end: ", request.body);
 
-  let newContact = new Contact({
+  let updatedContact = new Contact({
     salutation: request.body.contact_info.salutation,
     first_name: request.body.contact_info.first_name,
     last_name: request.body.contact_info.last_name,
@@ -711,7 +840,7 @@ app.post("/contacts/create", function(request, response) {
     created_by_ID: user_id
   });
 
-  newContact.save()
+  updatedContact.save()
     .then(function(result) {
       console.log("Contact created successfully: ", result);
       response.json({
@@ -817,26 +946,6 @@ app.put("/contact/update", function(request, response) {
   let contact_id = request.body.contact_info._id;
   console.log("This is the request sent from the front end: ", request.body);
   console.log("This is the contact id: ", contact_id);
-
-
-  let newContact = new Contact({
-    salutation: request.body.contact_info.salutation,
-    first_name: request.body.contact_info.first_name,
-    last_name: request.body.contact_info.last_name,
-    email: request.body.contact_info.email,
-    phone: request.body.contact_info.phone,
-    address: request.body.contact_info.address,
-    address2: request.body.contact_info.address2,
-    city: request.body.contact_info.city,
-    state: request.body.contact_info.state,
-    zip_code: request.body.contact_info.zip_code,
-    description: request.body.contact_info.description,
-    account: request.body.contact_info.account,
-    ownerID: user_id,
-    created_at: new Date(),
-    created_by_ID: user_id
-  });
-
 
   return Contact.update({
       _id: contact_id
@@ -1091,7 +1200,7 @@ app.get("/comments/view/:accountID", function(request, response) {
         comments: comments
       })
     })
-    .then(function(error) {
+    .catch(function(error) {
       response.status(400);
       console.log("Error finding comments for account: ", error);
     })
