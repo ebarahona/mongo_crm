@@ -307,6 +307,14 @@ service.searchParent = function(searchInfo) {
   });
 };
 
+service.ViewCallsSmallView = function(searchID) {
+  console.log("ID to search: ", searchID);
+
+  return $http({
+    method: "GET",
+    url: "/view/calls_small_view/" + searchID,
+  });
+};
 
 
 
@@ -1075,6 +1083,23 @@ app.controller("ViewCallController", function($scope, $stateParams, CRM_Factory)
 });
 
 
+//////////// CALLS-SPECIFIC CONTROLLERS ///////////
+app.controller("ViewCallsSmallViewController", function($scope, $stateParams, CRM_Factory) {
+  var userID = $stateParams.userID;
+  console.log("Using the ViewCallsSmallViewController: ", userID);
+
+  CRM_Factory.ViewCallsSmallView(userID)
+    .then(function(calls) {
+      console.log("calls: ", calls);
+      $scope.calls = calls.data.calls;
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
+});
+
+
+
 
 //////////////////
 //    ROUTES    //
@@ -1120,7 +1145,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_user.calls",
     url: "/calls",
-    templateUrl: "views/view_user.html"
+    templateUrl: "views/calls/calls_small_view.html",
+    controller: "ViewCallsSmallViewController"
   })
   .state({
     name: "edit_user",

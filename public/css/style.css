@@ -24,6 +24,13 @@ textarea {
   margin-top: 35px;
 }
 
+/*
+ * Calls view (small view)
+ */
+.bottom-spacing {
+  margin-bottom: 35px;
+}
+
 
 /*
  * Navigation Bar Styles
