@@ -383,17 +383,9 @@ const Comment = mongoose.model("Comment", {
 
 //////////////// USER ROUTES /////////////
 // ----------- Register User ---------- //
-app.post("/users/register", upload.single("profileimage"), function(request, response) {
+app.post("/users/register", function(request, response) {
   console.log("Here is the registration information: ", request.body);
   let password = request.body.password;
-
-  if (request.file) {
-    console.log("Uploading file...");
-    let profileimage = request.file.filename;
-  } else {
-    console.log("No file uploaded...");
-    profileimage = "noimage.jpg";
-  }
 
   bcrypt.hash(password, saltRounds)
     .then(function(hash) {
@@ -403,8 +395,7 @@ app.post("/users/register", upload.single("profileimage"), function(request, res
         last_name: request.body.last_name,
         username: request.body.username,
         email: request.body.email,
-        password: hash,
-        profileimage: profileimage
+        password: hash
       });
 
       newRegistration.save()

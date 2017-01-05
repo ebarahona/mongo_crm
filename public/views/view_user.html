@@ -42,7 +42,8 @@
                       </span>
                     </div>
                   </li>
-        					<li>
+                  <!-- Not currently implemented -->
+        					<!-- <li>
         						<div class="details">
                       <i class="fa fa-briefcase fa-fw"></i>
                       title
@@ -66,14 +67,15 @@
                         description
                       </span>
                     </div>
-                  </li>
+                  </li> -->
         				</ul>
               </div>
 
               <div class="col-xs-6 col-sm-12 padding-left">
                 <h4 class="information">User Information</h4>
                 <ul class="profile-details">
-                  <li>
+                  <!-- Not currently implemented -->
+                  <!-- <li>
                     <div class="details">
                       <i class="fa fa-phone fa-fw"></i>
                       phone
@@ -90,7 +92,7 @@
                         (123) 456-7890
                       </span>
                     </div>
-                  </li>
+                  </li> -->
                   <li ng-show="user.email">
                     <div class="details">
                       <i class="fa fa-envelope-o fa-fw"></i>
@@ -102,7 +104,8 @@
                       </span>
                     </div>
                   </li>
-                  <li>
+                  <!-- Not currently implemented -->
+                  <!-- <li>
                     <div class="details"><i class="fa fa-map-marker fa-fw"></i>
                       address
                       <span class="details-info">
@@ -111,7 +114,7 @@
                         Slask, Poland
                       </span>
                     </div>
-                  </li>
+                  </li> -->
                 </ul>
               </div>
 
@@ -124,17 +127,21 @@
 
           <ul class="nav nav-pills">
             <li role="presentation" class="active">
-              <a ui-sref="view_user.home">User Home</a>
+              <a ui-sref="view_user.comments">Comments</a>
             </li>
             <li role="presentation">
-              <a ui-sref="view_user.profile">User Profile</a>
+              <a ui-sref="view_user.calls">Calls</a>
             </li>
             <li role="presentation">
               <a href="#">Messages</a>
             </li>
           </ul>
 
-          <ui-view></ui-view>
+          <div class="container-fluid">
+            <div class="nested-view">
+              <ui-view></ui-view>
+            </div>
+          </div>
 
 
 

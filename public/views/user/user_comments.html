@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<div class="row">
+
+  <form class="form-horizontal">
+    <fieldset>
+
+      <div class="form-group">
+        <label for="comment" class="col-sm-2 control-label">Comment</label>
+        <div class="col-sm-8">
+          <textarea ng-model="comment" ng-trim="true" name="account_comment" rows="2" placeholder="Write your comment here"></textarea>
+        </div>
+        <button ng-click="saveComment()" class="btn btn-primary btn-sm" type="button" name="save_btn">Save</button>
+      </div>
+
+    </fieldset>
+  </form>
+
+</div>
+<!-- /.row -->
+
+<div class="row">
+
+  <div ng-repeat="comment in comments" class="">
+    <div class="media">
+      <div class="media-left">
+        <!-- <h5>There should be an image here!</h5> -->
+        <a href="#">
+  				<img class="avatar-image" ng-src="https://scontent-atl3-1.xx.fbcdn.net/v/t1.0-9/306403_10100476043786240_1926977104_n.jpg?oh=7a4808bf31016f0a6dbc27cd7166ce48&oe=58E3CE4D">
+        </a>
+      </div>
+      <div class="media-body">
+        <h5 class="media-heading">Commented on {{ comment.created_at | date:"MMM dd, yyyy 'at' h:mma" }}</h5>
+        <p>{{ comment.text }}</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- /.row -->
