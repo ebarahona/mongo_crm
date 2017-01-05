@@ -35,7 +35,7 @@
         <td><a ui-sref="view_call({callID: call._id})">{{ call.name }}</a></td>
         <td>{{ call.linked_to.name }}</td>
         <td>{{ call.status }}</td>
-        <td>{{ call.start_date | date:'medium' }}</td>
+        <td>{{ call.start_date | date:"MMM dd, yyyy 'at' h:mma" }}</td>
         <td>{{ call.ownerID }}</td>
       </tr>
     </tbody>

@@ -156,9 +156,9 @@ const Account = mongoose.model("Account", {
   email: {
     type: String
   },
-  phone: [{
+  phone: {
     type: String
-  }],
+  },
   website: {
     type: String
   },
@@ -226,9 +226,9 @@ const Contact = mongoose.model("Contact", {
   email: {
     type: String
   },
-  phone: [{
+  phone: {
     type: String
-  }],
+  },
   address: {
     type: String
   },

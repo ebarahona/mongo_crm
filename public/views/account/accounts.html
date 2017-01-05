@@ -29,7 +29,7 @@
         <th><a href="" ng-click="orderByField='industry'; reverseSort = !reverseSort">Industry</a></th>
         <th><a href="" ng-click="orderByField='phone'; reverseSort = !reverseSort">Phone</a></th>
         <th><a href="" ng-click="orderByField='city'; reverseSort = !reverseSort">City</a></th>
-        <th><a href="" ng-click="orderByField='created_at'; reverseSort = !reverseSort">Created At</a></th>
+        <th><a href="" ng-click="orderByField='created_at'; reverseSort = !reverseSort">Created On</a></th>
       </tr>
     </thead>
     <tbody>
@@ -40,7 +40,7 @@
         <td>{{ account.industry }}</td>
         <td>{{ account.phone }}</td>
         <td>{{ account.city }}</td>
-        <td>{{ account.created_at | date:'medium' }}</td>
+        <td>{{ account.created_at | date:"MMM dd, yyyy 'at' h:mma" }}</td>
       </tr>
     </tbody>
     </table>
