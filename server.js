@@ -346,6 +346,7 @@ const Call = mongoose.model("Call", {
 });
 
 //////////////// COMMENTS ///////////////////
+// Using model for accounts, contacts, users, etc.  Need to change the account below to something more generic.  Will need to make changes in other files as well.
 const Comment = mongoose.model("Comment", {
   text: {
     type: String
