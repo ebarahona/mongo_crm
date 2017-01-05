@@ -1,4 +1,4 @@
-var app = angular.module("crm_app", ["ui.router", "ngCookies", "ngTouch", "ngAnimate", "ui.bootstrap", "ngFileUpload"]);
+var app = angular.module("crm_app", ["ui.router", "ngCookies", "ngTouch", "ngAnimate", "ui.bootstrap", "angularFileUpload"]);
 
 
 ////////////////
@@ -67,6 +67,19 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     return $http({
       method: "GET",
       url: "/user/" + userID
+    });
+  };
+
+  // Update user
+  service.updateUser = function(user_info) {
+    console.log("In the factory trying to update the user");
+    console.log("UserID: ", user_info);
+    return $http({
+      method: "PUT",
+      url: "/user/update",
+      data: {
+        user_info: user_info
+      }
     });
   };
 
@@ -400,6 +413,57 @@ app.controller("ViewUserController", function($scope, $state, $stateParams, $roo
     .catch(function(error) {
       console.log("There was an error!!!", error);
     });
+});
+
+app.controller("EditUserController", function($scope, $state, $stateParams, $rootScope, CRM_Factory, FileUploader) {
+  var user_id = $stateParams.userID;
+  console.log("user_id: ", user_id);
+  $scope.user = {};
+
+  // Scroll to top when loading page (need this when coming from another page)
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+  $scope.viewUser = function() {
+    CRM_Factory.viewUser(user_id)
+      .then(function(user) {
+        $scope.user = user.data.user[0];
+        console.log("Here's the user: ", $scope.user);
+        delete $scope.user.password;
+        console.log("Here's the user: ", $scope.user);
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error);
+      });
+  };
+
+  // load view user initally when the page loads
+  $scope.viewUser();
+
+  var uploader = $scope.uploader = new FileUploader({
+    url: "/upload_profile_image/" + user_id
+  });
+
+  uploader.onSuccessItem = function(response, status) {
+    console.info('onSuccessItem', response, status);
+    $scope.viewUser();
+    console.log("I can see me after uploading an image");
+  };
+
+  $scope.updateUser = function() {
+    var user_information = $scope.user;
+    console.log("user_information: ", user_information);
+    console.log("Clicked the update button!");
+    CRM_Factory.updateUser(user_information)
+      .then(function(success) {
+        console.log("\n\n\nWe were successful: ", success);
+        // Go back to view the updated account
+        $state.go("view_user", {userID: user_id});
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+
 });
 
 
@@ -954,7 +1018,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "users",
     url: "/Users",
-    templateUrl: "views/users.html",
+    templateUrl: "views/user/users.html",
     controller: "UsersController"
   })
   .state({
@@ -966,12 +1030,18 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_user.comments",
     url: "/comments",
-    templateUrl: "views/users.html"
+    templateUrl: "views/user/users.html"
   })
   .state({
     name: "view_user.calls",
     url: "/calls",
     templateUrl: "views/view_user.html"
+  })
+  .state({
+    name: "edit_user",
+    url: "/User/edit/{userID}",
+    templateUrl: "views/user/edit_user.html",
+    controller: "EditUserController"
   })
   .state({
     name: "accounts",
