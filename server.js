@@ -1231,6 +1231,23 @@ app.get("/comments/view/:accountID", function(request, response) {
 });
 
 
+////////////// GENERAL ROUTES /////////////
+app.get("/view/calls_small_view/:searchID", function(request, response) {
+  let searchID = request.params.searchID;
+  console.log("I'm in the backend with this searchID: ", searchID);
+
+  Call.find({ ownerID: searchID }).sort({status: -1})
+    .then(function(calls) {
+      console.log("Calls: ", calls);
+      response.json({
+        calls: calls
+      })
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error looking for the information: ", error.stack);
+    })
+});
 
 
 
