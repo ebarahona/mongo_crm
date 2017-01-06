@@ -307,14 +307,26 @@ service.searchParent = function(searchInfo) {
   });
 };
 
-service.ViewCallsSmallView = function(searchID) {
+service.ViewUserCallsSmallView = function(searchID) {
   console.log("ID to search: ", searchID);
 
   return $http({
     method: "GET",
-    url: "/view/calls_small_view/" + searchID,
+    url: "/view/user/calls_small_view/" + searchID,
   });
 };
+
+service.ViewAccountCallsSmallView = function(searchID) {
+  console.log("ID to search: ", searchID);
+
+  return $http({
+    method: "GET",
+    url: "/view/account/calls_small_view/" + searchID,
+  });
+};
+
+
+
 
 
 
@@ -968,9 +980,11 @@ app.controller("CreateCallController", function($scope, $state, CRM_Factory) {
     } else {
       var selected_parent = $scope.call.selected_parent;
       var linked_to_search = $scope.call.linked_to_search;
+      var chosen_result_id = $scope.call.chosen_result_id;
       var searchInfo = {
         selected_parent: selected_parent,
-        linked_to_search: linked_to_search
+        linked_to_search: linked_to_search,
+        chosen_result_id: chosen_result_id
       };
       console.log("searchInfo: ", searchInfo);
       CRM_Factory.searchParent(searchInfo)
@@ -997,6 +1011,7 @@ app.controller("CreateCallController", function($scope, $state, CRM_Factory) {
     if (resultName) {
       console.log("I have an account");
       $scope.call.chosen_result = resultName;
+      $scope.call.chosen_result_id = resultID;
       console.log($scope.call.chosen_result);
     } else {
       console.log("I don't have an account");
@@ -1084,11 +1099,11 @@ app.controller("ViewCallController", function($scope, $stateParams, CRM_Factory)
 
 
 //////////// CALLS-SPECIFIC CONTROLLERS ///////////
-app.controller("ViewCallsSmallViewController", function($scope, $stateParams, CRM_Factory) {
+app.controller("UserCallsSmallViewController", function($scope, $stateParams, CRM_Factory) {
   var userID = $stateParams.userID;
-  console.log("Using the ViewCallsSmallViewController: ", userID);
+  console.log("Using the UserCallsSmallViewController: ", userID);
 
-  CRM_Factory.ViewCallsSmallView(userID)
+  CRM_Factory.ViewUserCallsSmallView(userID)
     .then(function(calls) {
       console.log("calls: ", calls);
       $scope.calls = calls.data.calls;
@@ -1097,6 +1112,21 @@ app.controller("ViewCallsSmallViewController", function($scope, $stateParams, CR
       console.log("There was an error!!!", error);
     });
 });
+
+app.controller("AccountCallsSmallViewController", function($scope, $stateParams, CRM_Factory) {
+  var accountID = $stateParams.accountID;
+  console.log("Using the AccountCallsSmallViewController: ", accountID);
+
+  CRM_Factory.ViewAccountCallsSmallView(accountID)
+    .then(function(calls) {
+      console.log("calls: ", calls);
+      $scope.calls = calls.data.calls;
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
+});
+
 
 
 
@@ -1146,7 +1176,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
     name: "view_user.calls",
     url: "/calls",
     templateUrl: "views/calls/calls_small_view.html",
-    controller: "ViewCallsSmallViewController"
+    controller: "UserCallsSmallViewController"
   })
   .state({
     name: "edit_user",
@@ -1181,7 +1211,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_account.calls",
     url: "/calls",
-    templateUrl: "views/account/view_account.html"
+    templateUrl: "views/calls/calls_small_view.html",
+    controller: "AccountCallsSmallViewController"
   })
   .state({
     name: "edit_account",

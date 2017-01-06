@@ -294,7 +294,8 @@ const Call = mongoose.model("Call", {
   },
   linked_to: {
     selected: String,
-    name: String
+    name: String,
+    name_id: String
   },
   status: {
     type: String,
@@ -1069,6 +1070,7 @@ app.post("/calls/create", function(request, response) {
     linked_to: {
       selected: request.body.call_info.selected_parent,
       name: request.body.call_info.chosen_result,
+      name_id: request.body.call_info.chosen_result_id
     },
     status: request.body.call_info.selected_status,
     direction: request.body.call_info.direction,
@@ -1232,7 +1234,7 @@ app.get("/comments/view/:accountID", function(request, response) {
 
 
 ////////////// GENERAL ROUTES /////////////
-app.get("/view/calls_small_view/:searchID", function(request, response) {
+app.get("/view/user/calls_small_view/:searchID", function(request, response) {
   let searchID = request.params.searchID;
   console.log("I'm in the backend with this searchID: ", searchID);
 
@@ -1248,6 +1250,52 @@ app.get("/view/calls_small_view/:searchID", function(request, response) {
       console.log("There was an error looking for the information: ", error.stack);
     })
 });
+
+app.get("/view/account/calls_small_view/:searchID", function(request, response) {
+  let searchID = request.params.searchID;
+  console.log("I'm in the backend with this searchID: ", searchID);
+
+  // Call.find({ linked_to.name_id: searchID }).sort({status: -1})
+  // Call.find({doc})
+  //   .then(function(calls) {
+  //     console.log("Calls: ", calls);
+  //     response.json({
+  //       calls: calls
+  //     })
+  //   })
+  //   .catch(function(error) {
+  //     response.status(400);
+  //     console.log("There was an error looking for the information: ", error.stack);
+  //   })
+
+  Call.find({
+    "linked_to.name_id": searchID
+  })
+    .then(function(calls) {
+      console.log("Calls: ", calls);
+      response.json({
+        calls: calls
+      })
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error looking for the information: ", error.stack);
+    })
+
+
+  // Call.find({
+  //   "linked_to.name_id": searchID
+  // }, function(error, calls){
+  //   if (error)console.log(error)
+  //   if (calls){
+  //       console.log(calls);
+  //   }
+  // })
+
+});
+
+
+
 
 
 
