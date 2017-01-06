@@ -12,7 +12,7 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 
   if ($rootScope.CRM_FactoryCookieData) {
     $rootScope.authToken = $rootScope.CRM_FactoryCookieData.data.token;
-    $rootScope.user = $rootScope.CRM_FactoryCookieData.data.user_information;
+    $rootScope.logged_user = $rootScope.CRM_FactoryCookieData.data.user_information;
   }
 
 
@@ -403,7 +403,7 @@ app.controller("LoginController", function($scope, $state, $cookies, $rootScope,
         console.log("We were successful: ", login_result);
         $cookies.putObject("cookieData", login_result);
         $rootScope.cookie_data = login_result;
-        $rootScope.user = login_result.data.user_information;
+        $rootScope.logged_user = login_result.data.user_information;
         $rootScope.authToken = login_result.data.token;
         // $route.reload();
         console.log("username", $scope.user.username);
@@ -446,18 +446,19 @@ app.controller("ViewUserController", function($scope, $state, $stateParams, $roo
 });
 
 app.controller("EditUserController", function($scope, $state, $stateParams, $rootScope, CRM_Factory, FileUploader) {
+
   var user_id = $stateParams.userID;
   console.log("user_id: ", user_id);
-  $scope.user = {};
-
+  // $scope.user = {};
   // Scroll to top when loading page (need this when coming from another page)
   document.body.scrollTop = document.documentElement.scrollTop = 0;
 
   $scope.viewUser = function() {
     CRM_Factory.viewUser(user_id)
       .then(function(user) {
+
         $scope.user = user.data.user[0];
-        console.log("Here's the user: ", $scope.user);
+        console.log("Here's the rootscope user: ", $scope.user);
         delete $scope.user.password;
         console.log("Here's the user: ", $scope.user);
       })
