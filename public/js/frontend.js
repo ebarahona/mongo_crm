@@ -598,19 +598,26 @@ app.controller("EditAccountController", function($scope, $stateParams, $state, C
   document.body.scrollTop = document.documentElement.scrollTop = 0;
 
   var account_id = $stateParams.accountID;
-  CRM_Factory.viewAccount(account_id)
-    .then(function(account_info) {
-      console.log("\n\nThis is the account_info: ", account_info);
-      $scope.account = account_info.data.account;
-      $scope.account_contacts = account_info.data.account_contacts;
-      $scope.account_owner = account_info.data.user[0];
-      console.log("\nThe account: ", $scope.account);
-      console.log("\nThe contacts: ", $scope.account_contacts);
-      console.log("\nThe account owner: ", $scope.account_owner);
-    })
-    .catch(function(error) {
-      console.log("There was an error!!!", error);
-    });
+
+  $scope.viewAccount = function() {
+    CRM_Factory.viewAccount(account_id)
+      .then(function(account_info) {
+        console.log("\n\nThis is the account_info: ", account_info);
+        $scope.account = account_info.data.account;
+        $scope.account_contacts = account_info.data.account_contacts;
+        $scope.account_owner = account_info.data.user[0];
+        console.log("\nThe account: ", $scope.account);
+        console.log("\nThe contacts: ", $scope.account_contacts);
+        console.log("\nThe account owner: ", $scope.account_owner);
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error);
+      });
+  };
+
+  // Call viewAccount after loading page
+  $scope.viewAccount();
+
 
   $scope.searchContacts = function(event) {
     console.log("Event is: ", event);
@@ -637,6 +644,9 @@ app.controller("EditAccountController", function($scope, $stateParams, $state, C
     CRM_Factory.addContactToAccount(contactID, accountID)
       .then(function(updated_information) {
         console.log("Here's the updated_information", updated_information);
+        $scope.account.contacts_search = "";
+        // Reload account information after adding contact
+        $scope.viewAccount();
       })
       .catch(function(error) {
         console.log("There was an error!!!", error);
