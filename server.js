@@ -1255,19 +1255,7 @@ app.get("/view/account/calls_small_view/:searchID", function(request, response) 
   let searchID = request.params.searchID;
   console.log("I'm in the backend with this searchID: ", searchID);
 
-  // Call.find({ linked_to.name_id: searchID }).sort({status: -1})
-  // Call.find({doc})
-  //   .then(function(calls) {
-  //     console.log("Calls: ", calls);
-  //     response.json({
-  //       calls: calls
-  //     })
-  //   })
-  //   .catch(function(error) {
-  //     response.status(400);
-  //     console.log("There was an error looking for the information: ", error.stack);
-  //   })
-
+  // Search for embeded object inside an object(s)
   Call.find({
     "linked_to.name_id": searchID
   })
@@ -1281,17 +1269,26 @@ app.get("/view/account/calls_small_view/:searchID", function(request, response) 
       response.status(400);
       console.log("There was an error looking for the information: ", error.stack);
     })
+});
 
+app.get("/view/contact/calls_small_view/:searchID", function(request, response) {
+  let searchID = request.params.searchID;
+  console.log("I'm in the backend with this searchID: ", searchID);
 
-  // Call.find({
-  //   "linked_to.name_id": searchID
-  // }, function(error, calls){
-  //   if (error)console.log(error)
-  //   if (calls){
-  //       console.log(calls);
-  //   }
-  // })
-
+  // Search for embeded object inside an object(s)
+  Call.find({
+    "linked_to.name_id": searchID
+  })
+    .then(function(calls) {
+      console.log("Calls: ", calls);
+      response.json({
+        calls: calls
+      })
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error looking for the information: ", error.stack);
+    })
 });
 
 

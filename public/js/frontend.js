@@ -325,6 +325,16 @@ service.ViewAccountCallsSmallView = function(searchID) {
   });
 };
 
+service.ViewContactCallsSmallView = function(searchID) {
+  console.log("ID to search: ", searchID);
+
+  return $http({
+    method: "GET",
+    url: "/view/contact/calls_small_view/" + searchID,
+  });
+};
+
+
 
 
 
@@ -966,8 +976,7 @@ app.controller("CallsController", function($scope, $state, CRM_Factory) {
 
 app.controller("CreateCallController", function($scope, $state, CRM_Factory) {
   // $scope.call.selected_parent = "";
-  $scope.call_parents = ["Account", "Contact",
-      "Lead", "Opportunity"];
+  $scope.call_parents = ["Account", "Contact"];
   $scope.call_statuses = ["Planned", "Held", "Not Held"];
 
   $scope.searchParent = function(event) {
@@ -1009,15 +1018,17 @@ app.controller("CreateCallController", function($scope, $state, CRM_Factory) {
     $scope.results = "";
     $scope.resultID = resultID;
     if (resultName) {
-      console.log("I have an account");
+      console.log("I am account");
       $scope.call.chosen_result = resultName;
       $scope.call.chosen_result_id = resultID;
       console.log($scope.call.chosen_result);
     } else {
-      console.log("I don't have an account");
+      console.log("I am a contact");
       var first_name = resultFirstName;
       var last_name = resultLastName;
       $scope.call.chosen_result = first_name + " " + last_name;
+      $scope.call.chosen_result_id = resultID;
+      console.log($scope.call.chosen_result);
     }
   };
 
@@ -1126,6 +1137,21 @@ app.controller("AccountCallsSmallViewController", function($scope, $stateParams,
       console.log("There was an error!!!", error);
     });
 });
+
+app.controller("ContactCallsSmallViewController", function($scope, $stateParams, CRM_Factory) {
+  var contactID = $stateParams.contactID;
+  console.log("Using the ContactCallsSmallViewController: ", contactID);
+
+  CRM_Factory.ViewContactCallsSmallView(contactID)
+    .then(function(calls) {
+      console.log("calls: ", calls);
+      $scope.calls = calls.data.calls;
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
+});
+
 
 
 
@@ -1247,7 +1273,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_contact.calls",
     url: "/calls",
-    templateUrl: "views/view_contact.html"
+    templateUrl: "views/calls/calls_small_view.html",
+    controller: "ContactCallsSmallViewController"
   })
   .state({
     name: "edit_contact",

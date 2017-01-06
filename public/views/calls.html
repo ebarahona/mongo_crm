@@ -27,7 +27,6 @@
         <th><a href="" ng-click="orderByField='linked_to'; reverseSort = !reverseSort">Linked To</a></th>
         <th><a href="" ng-click="orderByField='status'; reverseSort = !reverseSort">Status</a></th>
         <th><a href="" ng-click="orderByField='start_date'; reverseSort = !reverseSort">Start Date</a></th>
-        <th><a href="" ng-click="orderByField='assigned_user'; reverseSort = !reverseSort">Assigned User</a></th>
       </tr>
     </thead>
     <tbody>
@@ -36,7 +35,6 @@
         <td>{{ call.linked_to.name }}</td>
         <td>{{ call.status }}</td>
         <td>{{ call.start_date | date:"MMM dd, yyyy 'at' h:mma" }}</td>
-        <td>{{ call.ownerID }}</td>
       </tr>
     </tbody>
     </table>
