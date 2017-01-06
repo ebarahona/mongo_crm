@@ -62,6 +62,10 @@ textarea {
   margin-top: 25px;
 }
 
+.information-no-top-margin {
+  margin-top: 0px;
+}
+
 .profile-details {
   padding-left: 5px;
 }
