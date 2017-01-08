@@ -4,16 +4,12 @@
   <div class="row">
     <div class="col-xs-12">
       <h4><a ui-sref="users">Users </a>&gt;&gt; {{ user.salutation }} {{ user.first_name }} {{ user.last_name }}</h4>
-    </div>
-  </div>
 
-  <!-- logged_user id: {{ logged_user._id }}
-  <br>
-  user: {{ user }}
-  {{ user._id }} -->
+      <!-- logged_user id: {{ logged_user._id }}
+      <br>
+      user: {{ user }}
+      {{ user._id }} -->
 
-  <div class="row">
-    <div class="col-xs-12">
       <button ng-show="logged_user._id = user._id"  ui-sref="edit_user({userID: user._id})" class="btn btn-primary btn-sm" type="button" name="edit_btn">Edit</button>
       <hr>
     </div>

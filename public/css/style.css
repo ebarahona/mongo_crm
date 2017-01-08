@@ -32,6 +32,9 @@ textarea {
   margin-bottom: 35px;
 }
 
+.upload-image {
+  margin-top: 20px;
+}
 
 /*
  * Navigation Bar Styles
@@ -58,9 +61,9 @@ i.fa-bars {
 }
 
 .avatar-image {
-  width: 30px;
+  height: 25px;
   /* width: 100%; */
-  border: 2px solid #FFF;
+  /*border: 2px solid #FFF;*/
   border-radius: 5px;
 }
 

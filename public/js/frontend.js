@@ -1230,7 +1230,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "create_account",
     url: "/Account/create",
-    templateUrl: "views/create_account.html",
+    templateUrl: "views/account/create_account.html",
     controller: "CreateAccountController"
   })
   .state({
@@ -1248,7 +1248,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_account.calls",
     url: "/calls",
-    templateUrl: "views/calls/calls_small_view.html",
+    templateUrl: "views/call/calls_small_view.html",
     controller: "AccountCallsSmallViewController"
   })
   .state({
@@ -1266,7 +1266,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "create_contact",
     url: "/Contact/create",
-    templateUrl: "views/create_contact.html",
+    templateUrl: "views/contact/create_contact.html",
     controller: "CreateContactController"
   })
   .state({
@@ -1284,7 +1284,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_contact.calls",
     url: "/calls",
-    templateUrl: "views/calls/calls_small_view.html",
+    templateUrl: "views/call/calls_small_view.html",
     controller: "ContactCallsSmallViewController"
   })
   .state({
@@ -1302,7 +1302,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "create_call",
     url: "/Call/create",
-    templateUrl: "views/create_call.html",
+    templateUrl: "views/call/create_call.html",
     controller: "CreateCallController"
   })
   .state({
