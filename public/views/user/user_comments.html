@@ -7,10 +7,11 @@
 
       <div class="form-group">
         <label for="comment" class="col-sm-2 control-label">Comment</label>
-        <div class="col-sm-8">
+        <div class="col-sm-10">
           <textarea ng-model="comment" ng-trim="true" name="account_comment" rows="2" placeholder="Write your comment here"></textarea>
+          <button ng-click="saveComment()" class="btn btn-primary btn-sm" type="button" name="save_btn">Save</button>
         </div>
-        <button ng-click="saveComment()" class="btn btn-primary btn-sm" type="button" name="save_btn">Save</button>
+
       </div>
 
     </fieldset>
@@ -36,7 +37,7 @@
     </div>
   </div> -->
 
-  <div class="table-responsive">
+  <div ng-show="comments" class="table-responsive">
     <table class="table table-striped table-condensed">
     <thead>
       <tr>

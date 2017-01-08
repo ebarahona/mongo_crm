@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-8">
+
+    </div>
+    <div class="col-sm-4">
+      <button ng-click="createContact()" class="btn btn-success btn-sm pull-right" type="button" name="button">Create Contact</button>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-xs-12">
+
+      <div id="search">
+  			<span class="col-md-1 search-label">Search</span>
+  			<span class="col-md-5">
+  			<input type="text" class="form-control ng-pristine ng-valid" ng-model="searchKeyword">
+  			</span>
+  		</div>
+
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th><a href="" ng-click="orderByField='first_name'; reverseSort = !reverseSort">Name</a></th>
+              <th><a href="" ng-click="orderByField='email'; reverseSort = !reverseSort">Email</a></th>
+              <th><a href="" ng-click="orderByField='phone'; reverseSort = !reverseSort">Phone</a></th>
+              <th><a href="" ng-click="orderByField='created_at'; reverseSort = !reverseSort">Created On</a></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="contact in contacts | filter: searchKeyword | orderBy:orderByField:reverseSort">
+              <td><a ui-sref="view_contact({contactID: contact._id})">{{ contact.first_name }} {{ contact.last_name }}</a></td>
+              <td>{{ contact.email }}</td>
+              <td>{{ contact.phone }}</td>
+              <td>{{ contact.created_at | date:"MMM dd, yyyy 'at' h:mma" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

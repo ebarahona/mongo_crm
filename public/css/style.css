@@ -12,6 +12,7 @@
 
 .search-label {
   font-weight: bold;
+  padding: 0 15px 0 0;
 }
 
 /* Textarea fields */
@@ -39,6 +40,11 @@ textarea {
   cursor: pointer;
 }
 
+button.navbar-toggle span,
+i.fa-bars {
+  color: #FFF;
+}
+
 
 /*
  * Profile Styles
@@ -52,9 +58,9 @@ textarea {
 }
 
 .avatar-image {
-  width: 40px;
-  length 40px;
-  width: 100%;
+  width: 30px;
+  /* width: 100%; */
+  border: 2px solid #FFF;
   border-radius: 5px;
 }
 

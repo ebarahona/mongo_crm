@@ -8,41 +8,43 @@
       <button ng-click="createAccount()" class="btn btn-success btn-sm pull-right" type="button" name="button">Create Account</button>
     </div>
   </div>
+
   <div class="row">
+    <div class="col-xs-12">
 
-  </div>
-  <div class="row">
+      <div id="search">
+  			<span class="col-md-1 search-label">Search</span>
+  			<span class="col-md-5">
+  			<input type="text" class="form-control ng-pristine ng-valid" ng-model="searchKeyword">
+  			</span>
+  		</div>
 
-    <div id="search">
-			<span class="col-md-1 search-label">Search</span>
-			<span class="col-md-3">
-			<input type="text" class="form-control ng-pristine ng-valid" ng-model="searchKeyword">
-			</span>
-		</div>
-
-    <table class="table table-responsive table-striped table-hover ">
-    <thead>
-      <tr>
-        <th><a href="" ng-click="orderByField='name'; reverseSort = !reverseSort">Name</a></th>
-        <th><a href="" ng-click="orderByField='website'; reverseSort = !reverseSort">Website</a></th>
-        <th><a href="" ng-click="orderByField='type'; reverseSort = !reverseSort">Type</a></th>
-        <th><a href="" ng-click="orderByField='industry'; reverseSort = !reverseSort">Industry</a></th>
-        <th><a href="" ng-click="orderByField='phone'; reverseSort = !reverseSort">Phone</a></th>
-        <th><a href="" ng-click="orderByField='city'; reverseSort = !reverseSort">City</a></th>
-        <th><a href="" ng-click="orderByField='created_at'; reverseSort = !reverseSort">Created On</a></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="account in accounts | filter: searchKeyword | orderBy:orderByField:reverseSort">
-        <td><a ui-sref="view_account({accountID: account._id})">{{ account.name }}</a></td>
-        <td>{{ account.website }}</td>
-        <td>{{ account.type }}</td>
-        <td>{{ account.industry }}</td>
-        <td>{{ account.phone }}</td>
-        <td>{{ account.city }}</td>
-        <td>{{ account.created_at | date:"MMM dd, yyyy 'at' h:mma" }}</td>
-      </tr>
-    </tbody>
-    </table>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th><a href="" ng-click="orderByField='name'; reverseSort = !reverseSort">Name</a></th>
+              <th><a href="" ng-click="orderByField='website'; reverseSort = !reverseSort">Website</a></th>
+              <th><a href="" ng-click="orderByField='type'; reverseSort = !reverseSort">Type</a></th>
+              <th><a href="" ng-click="orderByField='industry'; reverseSort = !reverseSort">Industry</a></th>
+              <th><a href="" ng-click="orderByField='phone'; reverseSort = !reverseSort">Phone</a></th>
+              <th><a href="" ng-click="orderByField='city'; reverseSort = !reverseSort">City</a></th>
+              <th><a href="" ng-click="orderByField='created_at'; reverseSort = !reverseSort">Created On</a></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="account in accounts | filter: searchKeyword | orderBy:orderByField:reverseSort">
+              <td><a ui-sref="view_account({accountID: account._id})">{{ account.name }}</a></td>
+              <td>{{ account.website }}</td>
+              <td>{{ account.type }}</td>
+              <td>{{ account.industry }}</td>
+              <td>{{ account.phone }}</td>
+              <td>{{ account.city }}</td>
+              <td>{{ account.created_at | date:"MMM dd, yyyy 'at' h:mma" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>

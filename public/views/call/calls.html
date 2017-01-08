@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-8">
+
+    </div>
+    <div class="col-sm-4">
+      <button ng-click="createCall()" class="btn btn-success btn-sm pull-right" type="button" name="button">Create Call</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+
+      <div id="search">
+  			<span class="col-md-1 search-label">Search</span>
+  			<span class="col-md-5">
+  			<input type="text" class="form-control ng-pristine ng-valid" ng-model="searchKeyword">
+  			</span>
+  		</div>
+
+      <div class="table-responsive">
+        <table class="table table-responsive table-striped table-hover ">
+          <thead>
+            <tr>
+              <th><a href="" ng-click="orderByField='name'; reverseSort = !reverseSort">Name</a></th>
+              <th><a href="" ng-click="orderByField='linked_to'; reverseSort = !reverseSort">Linked To</a></th>
+              <th><a href="" ng-click="orderByField='status'; reverseSort = !reverseSort">Status</a></th>
+              <th><a href="" ng-click="orderByField='start_date'; reverseSort = !reverseSort">Start Date</a></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="call in calls | filter: searchKeyword | orderBy:orderByField:reverseSort">
+              <td><a ui-sref="view_call({callID: call._id})">{{ call.name }}</a></td>
+              <td>{{ call.linked_to.name }}</td>
+              <td>{{ call.status }}</td>
+              <td>{{ call.start_date | date:"MMM dd, yyyy 'at' h:mma" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  </div>
+</div>

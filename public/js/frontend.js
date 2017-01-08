@@ -89,7 +89,7 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 
   // Create an account
   service.createAccount = function(account_info) {
-    var user_id = $rootScope.user._id;
+    var user_id = $rootScope.logged_user._id;
     console.log("ID of the user that clicked the save account button: ", user_id);
     console.log("Account info: ", account_info);
     return $http({
@@ -122,7 +122,7 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 
   // Update account
   service.updateAccount = function(account_info) {
-    var user_id = $rootScope.user._id;
+    var user_id = $rootScope.logged_user._id;
     console.log("I'm in the factory and will update: ", account_info);
     return $http({
       method: "PUT",
@@ -162,7 +162,7 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 
   // Create a contact
   service.createContact = function(contact_info) {
-    var user_id = $rootScope.user._id;
+    var user_id = $rootScope.logged_user._id;
     console.log("ID of the user that clicked the save contact button: ", user_id);
     console.log("Contact info: ", contact_info);
     return $http({
@@ -195,7 +195,7 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 
   // Update contact
   service.updateContact = function(contact_info) {
-    var user_id = $rootScope.user._id;
+    var user_id = $rootScope.logged_user._id;
     console.log("I'm in the factory and will update: ", contact_info);
     return $http({
       method: "PUT",
@@ -236,7 +236,7 @@ service.addAccountToContact = function(accountID, contactID) {
 
 // Create call
 service.createCall = function(callInfo) {
-  var user_id = $rootScope.user._id;
+  var user_id = $rootScope.logged_user._id;
   console.log("ID of the user that clicked the save contact button: ", user_id);
   console.log("Call info: ", callInfo);
   return $http({
@@ -272,7 +272,7 @@ service.viewCall = function(callID) {
 ///////////////////// COMMENT SERVICES /////////////////////
 ////////////////////////////////////////////////////////////
 service.saveComment = function(comment, accountID) {
-  var user_id = $rootScope.user._id;
+  var user_id = $rootScope.logged_user._id;
   return $http({
     method: "POST",
     url: "/comments/create",
@@ -771,7 +771,7 @@ app.controller("UserCommentsController", function($scope, $state, $stateParams, 
 
   $scope.saveComment = function() {
     var comment = $scope.comment;
-    var user_id = $scope.user._id;
+    var user_id = $scope.logged_user._id;
     console.log("Comment after clicking the save button: ", comment);
     console.log("User id: ", user_id);
     CRM_Factory.saveComment(comment, user_id)
@@ -1182,13 +1182,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "register",
     url: "/User/register",
-    templateUrl: "views/register.html",
+    templateUrl: "views/user/register.html",
     controller: "RegisterController"
   })
   .state({
     name: "login",
     url: "/User/login",
-    templateUrl: "views/login.html",
+    templateUrl: "views/user/login.html",
     controller: "LoginController"
   })
   .state({
@@ -1200,7 +1200,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_user",
     url: "/Users/view/{userID}",
-    templateUrl: "views/view_user.html",
+    templateUrl: "views/user/view_user.html",
     controller: "ViewUserController"
   })
   .state({
@@ -1212,7 +1212,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_user.calls",
     url: "/calls",
-    templateUrl: "views/calls/calls_small_view.html",
+    templateUrl: "views/call/calls_small_view.html",
     controller: "UserCallsSmallViewController"
   })
   .state({
@@ -1254,13 +1254,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "edit_account",
     url: "/Account/edit/{accountID}",
-    templateUrl: "views/edit_account.html",
+    templateUrl: "views/account/edit_account.html",
     controller: "EditAccountController"
   })
   .state({
     name: "contacts",
     url: "/Contacts",
-    templateUrl: "views/contacts.html",
+    templateUrl: "views/contact/contacts.html",
     controller: "ContactsController"
   })
   .state({
@@ -1272,7 +1272,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_contact",
     url: "/Contact/view/{contactID}",
-    templateUrl: "views/view_contact.html",
+    templateUrl: "views/contact/view_contact.html",
     controller: "ViewContactController"
   })
   .state({
@@ -1290,13 +1290,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "edit_contact",
     url: "/Contact/edit/{contactID}",
-    templateUrl: "views/edit_contact.html",
+    templateUrl: "views/contact/edit_contact.html",
     controller: "EditContactController"
   })
   .state({
     name: "calls",
     url: "/Calls",
-    templateUrl: "views/calls.html",
+    templateUrl: "views/call/calls.html",
     controller: "CallsController"
   })
   .state({
@@ -1308,7 +1308,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_call",
     url: "/Call/view/{callID}",
-    templateUrl: "views/view_call.html",
+    templateUrl: "views/call/view_call.html",
     controller: "ViewCallController"
   })
   ;
