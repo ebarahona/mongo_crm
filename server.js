@@ -91,7 +91,9 @@ const User = mongoose.model("User", {
   username: {
     type: String,
     index: true,
-    required: true
+    unique: true,
+    required: true,
+    lowercase: true
   },
   email: {
     type: String
@@ -105,6 +107,11 @@ const User = mongoose.model("User", {
   },
   token: {
     type: String
+  },
+  created_at: {
+    type: Date,
+    required: true,
+    default: Date.now
   },
   updated_at: {
     type: Date,
@@ -391,9 +398,6 @@ app.post("/users/register", function(request, response) {
   bcrypt.hash(password, saltRounds)
     .then(function(hash) {
       let newRegistration = new User({
-        salutation: request.body.salutation,
-        first_name: request.body.first_name,
-        last_name: request.body.last_name,
         username: request.body.username,
         email: request.body.email,
         password: hash
@@ -452,7 +456,8 @@ app.post("/upload_profile_image/:userID", upload.single("file"), function(reques
 
         User.findOneAndUpdate(queryUser, {
           $set: {
-            profileimage: filename
+            profileimage: filename,
+            updated_at: new Date()
           }
         })
           .then(function(user) {
@@ -486,7 +491,9 @@ app.put("/user/update", function(request, response) {
         salutation: request.body.user_info.salutation,
         first_name: request.body.user_info.first_name,
         last_name: request.body.user_info.last_name,
-        email: request.body.user_info.email
+        email: request.body.user_info.email,
+        updated_at: new Date(),
+
       }
     })
       .then(function(updatedUser) {
@@ -501,8 +508,6 @@ app.put("/user/update", function(request, response) {
     });
 
 });
-
-
 
 // ----------- Login User ---------- //
 app.post("/users/login", function(request, response) {

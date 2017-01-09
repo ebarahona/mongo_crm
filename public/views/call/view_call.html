@@ -4,7 +4,19 @@
   <div class="row">
     <div class="col-sm-12">
       <h4><a ui-sref="calls">Call </a>&gt;&gt; {{ call.name }}</h4>
-      <button ng-click="saveCall()" class="btn btn-primary btn-sm" type="button" name="button">Edit</button>
+
+      <!-- Split button -->
+      <div class="btn-group">
+        <button class="btn btn-primary btn-sm" type="button" name="button">Edit</button>
+        <!-- <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a ui-sref="">Delete</a></li>
+        </ul> -->
+      </div>
+
       <hr>
     </div>
   </div>

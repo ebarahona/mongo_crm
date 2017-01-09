@@ -28,6 +28,7 @@
               <th><a href="" ng-click="orderByField='email'; reverseSort = !reverseSort">Email</a></th>
               <th><a href="" ng-click="orderByField='phone'; reverseSort = !reverseSort">Phone</a></th>
               <th><a href="" ng-click="orderByField='created_at'; reverseSort = !reverseSort">Created On</a></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -36,6 +37,15 @@
               <td>{{ contact.email }}</td>
               <td>{{ contact.phone }}</td>
               <td>{{ contact.created_at | date:"MMM dd, yyyy 'at' h:mma" }}</td>
+              <td>
+                <span class="dropdown">
+                <span class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></span>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li><a ui-sref="edit_contact({contactID: contact._id})">Edit</a></li>
+                  <!-- <li><a ui-sref="">Delete</a></li> -->
+                </ul>
+                </span>
+              </td>
             </tr>
           </tbody>
         </table>

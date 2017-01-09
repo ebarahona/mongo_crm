@@ -39,6 +39,7 @@ textarea {
 /*
  * Navigation Bar Styles
  */
+ /* Navbar Styles */
 #logout {
   cursor: pointer;
 }
@@ -46,6 +47,48 @@ textarea {
 button.navbar-toggle span,
 i.fa-bars {
   color: #FFF;
+}
+
+/* Pills Style */
+/* Make smaller pills */
+.nav-pills li a {
+  padding: 5px 10px;
+}
+
+/*
+ * Login / Register Styles
+ */
+/* Title with line */
+.login_register_title {
+  text-align: center;
+  border-bottom: 1px solid #DDD;
+  line-height: 0;
+  padding: 0;
+  margin-bottom: 50px;
+}
+
+.login_register_title span {
+  background: #FFF;
+  padding: 0 35px;
+}
+
+/* Border around input group */
+.login_register-input-group {
+  border: 1px solid darkgray;
+  border-radius: 10px;
+}
+
+.input-group .input-group-addon {
+  border-right: 1px solid darkgray;
+}
+
+.form-control.login_register_input {
+  padding-left: 10px;
+}
+
+.fa-exclamation-circle {
+  color: red;
+  padding-left: 10px;
 }
 
 
@@ -147,6 +190,13 @@ footer {
 /*
  * Media Queries
  */
+
+ /* Medium Devices, Desktops */
+@media only screen and (max-width : 992px) {
+  #search {
+    padding: 20px 0 10px 0;
+  }
+}
 
  /* Small Devices, Tablets */
  @media only screen and (max-width : 767px) {

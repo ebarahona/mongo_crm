@@ -28,6 +28,7 @@
               <th><a href="" ng-click="orderByField='linked_to'; reverseSort = !reverseSort">Linked To</a></th>
               <th><a href="" ng-click="orderByField='status'; reverseSort = !reverseSort">Status</a></th>
               <th><a href="" ng-click="orderByField='start_date'; reverseSort = !reverseSort">Start Date</a></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -36,6 +37,15 @@
               <td>{{ call.linked_to.name }}</td>
               <td>{{ call.status }}</td>
               <td>{{ call.start_date | date:"MMM dd, yyyy 'at' h:mma" }}</td>
+              <td>
+                <span class="dropdown">
+                <span class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></span>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li><a ui-sref="edit_call({callID: call._id})">Edit</a></li>
+                  <!-- <li><a ui-sref="">Delete</a></li> -->
+                </ul>
+                </span>
+              </td>
             </tr>
           </tbody>
         </table>

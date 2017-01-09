@@ -216,123 +216,123 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
-// Add account to contact
-service.addAccountToContact = function(accountID, contactID) {
-  console.log("In the factory.  Here are the IDs sent from the view contact page: ", accountID, contactID);
-  return $http({
-    method: "POST",
-    url: "/contact/add_account",
-    data: {
-      account_id: accountID,
-      contact_id: contactID
-    }
-  });
-};
+  // Add account to contact
+  service.addAccountToContact = function(accountID, contactID) {
+    console.log("In the factory.  Here are the IDs sent from the view contact page: ", accountID, contactID);
+    return $http({
+      method: "POST",
+      url: "/contact/add_account",
+      data: {
+        account_id: accountID,
+        contact_id: contactID
+      }
+    });
+  };
 
 
 ////////////////////////////////////////////////////////////
 ///////////////////// CALL SERVICES ///////////////////////
 ////////////////////////////////////////////////////////////
 
-// Create call
-service.createCall = function(callInfo) {
-  var user_id = $rootScope.logged_user._id;
-  console.log("ID of the user that clicked the save contact button: ", user_id);
-  console.log("Call info: ", callInfo);
-  return $http({
-    method: "POST",
-    url: "/calls/create",
-    data: {
-      user_id: user_id,
-      call_info: callInfo
-    }
-  });
-};
+  // Create call
+  service.createCall = function(callInfo) {
+    var user_id = $rootScope.logged_user._id;
+    console.log("ID of the user that clicked the save contact button: ", user_id);
+    console.log("Call info: ", callInfo);
+    return $http({
+      method: "POST",
+      url: "/calls/create",
+      data: {
+        user_id: user_id,
+        call_info: callInfo
+      }
+    });
+  };
 
-// Show all calls
-service.showCalls = function() {
-  console.log("I'm in the factory");
-  return $http({
-    method: "GET",
-    url: "/calls"
-  });
-};
+  // Show all calls
+  service.showCalls = function() {
+    console.log("I'm in the factory");
+    return $http({
+      method: "GET",
+      url: "/calls"
+    });
+  };
 
-// View call
-service.viewCall = function(callID) {
-  console.log("I'm in the factory and I got this: ", callID);
-  return $http({
-    method: "GET",
-    url: "/call/view/" + callID,
-  });
-};
+  // View call
+  service.viewCall = function(callID) {
+    console.log("I'm in the factory and I got this: ", callID);
+    return $http({
+      method: "GET",
+      url: "/call/view/" + callID,
+    });
+  };
 
 
 ////////////////////////////////////////////////////////////
 ///////////////////// COMMENT SERVICES /////////////////////
 ////////////////////////////////////////////////////////////
-service.saveComment = function(comment, accountID) {
-  var user_id = $rootScope.logged_user._id;
-  return $http({
-    method: "POST",
-    url: "/comments/create",
-    data: {
-      user_id: user_id,
-      comment_text: comment,
-      account_id: accountID
-    }
-  });
-};
+  service.saveComment = function(comment, accountID) {
+    var user_id = $rootScope.logged_user._id;
+    return $http({
+      method: "POST",
+      url: "/comments/create",
+      data: {
+        user_id: user_id,
+        comment_text: comment,
+        account_id: accountID
+      }
+    });
+  };
 
-service.viewComments = function(accountID) {
-  console.log("I got an account_id in the factory: ", accountID);
-  return $http({
-    method: "GET",
-    url: "/comments/view/" + accountID,
-  });
-};
+  service.viewComments = function(accountID) {
+    console.log("I got an account_id in the factory: ", accountID);
+    return $http({
+      method: "GET",
+      url: "/comments/view/" + accountID,
+    });
+  };
 
 
 ////////////////////////////////////////////////////////////
 ///////////////////// GENERAL SERVICES /////////////////////
 ////////////////////////////////////////////////////////////
-service.searchParent = function(searchInfo) {
-  var parent = searchInfo.selected_parent;
-  var searchTerm = searchInfo.linked_to_search;
-  var url = "/search_parent/" + parent + "/" + searchTerm;
+  service.searchParent = function(searchInfo) {
+    var parent = searchInfo.selected_parent;
+    var searchTerm = searchInfo.linked_to_search;
+    var url = "/search_parent/" + parent + "/" + searchTerm;
 
-  return $http({
-    method: "GET",
-    url: url
-  });
-};
+    return $http({
+      method: "GET",
+      url: url
+    });
+  };
 
-service.ViewUserCallsSmallView = function(searchID) {
-  console.log("ID to search: ", searchID);
+  service.ViewUserCallsSmallView = function(searchID) {
+    console.log("ID to search: ", searchID);
 
-  return $http({
-    method: "GET",
-    url: "/view/user/calls_small_view/" + searchID,
-  });
-};
+    return $http({
+      method: "GET",
+      url: "/view/user/calls_small_view/" + searchID,
+    });
+  };
 
-service.ViewAccountCallsSmallView = function(searchID) {
-  console.log("ID to search: ", searchID);
+  service.ViewAccountCallsSmallView = function(searchID) {
+    console.log("ID to search: ", searchID);
 
-  return $http({
-    method: "GET",
-    url: "/view/account/calls_small_view/" + searchID,
-  });
-};
+    return $http({
+      method: "GET",
+      url: "/view/account/calls_small_view/" + searchID,
+    });
+  };
 
-service.ViewContactCallsSmallView = function(searchID) {
-  console.log("ID to search: ", searchID);
+  service.ViewContactCallsSmallView = function(searchID) {
+    console.log("ID to search: ", searchID);
 
-  return $http({
-    method: "GET",
-    url: "/view/contact/calls_small_view/" + searchID,
-  });
-};
+    return $http({
+      method: "GET",
+      url: "/view/contact/calls_small_view/" + searchID,
+    });
+  };
 
 
 
@@ -360,34 +360,22 @@ app.controller("RegisterController", function($scope, $state, CRM_Factory) {
   $scope.user = {};
   $scope.register = function() {
     // var user_registration = $scope.user;
-    var user_registration = $scope.user;
-    var password2 = $scope.user.password2;
-    console.log("password2", password2);
-    console.log("user_registration: ", user_registration);
-    delete user_registration.password2;
-    CRM_Factory.register(user_registration)
-      .then(function(success) {
-        console.log("We were successful: ", success);
-        $state.go("login");
-      })
-      .catch(function(error) {
-        console.log("There was an error!!!", error.stack);
-      });
+    if ($scope.user.password === $scope.user.password2) {
+      var user_registration = $scope.user;
+      console.log("user_registration: ", user_registration);
+      CRM_Factory.register(user_registration)
+        .then(function(success) {
+          console.log("We were successful: ", success);
+          $state.go("login");
+        })
+        .catch(function(error) {
+          console.log("There was an error!!!", error.stack);
+        });
+    } else {
+      return;
+    }
   };
 });
-
-// Need to update later to have the avatar upload
-// app.controller("RegisterController", function($scope, $state, CRM_Factory) {
-//   console.log("I'm using the RegisterController");
-//   $scope.user = {};
-//   $scope.register = function() {
-//     console.log("I clicked the register button");
-//     var user_registration = $scope.user;
-//     console.log("User registration: ", user_registration);
-//     var image = $scope.user.profile_image;
-//     console.log("Image: ", image);
-//   };
-// });
 
 app.controller("LoginController", function($scope, $state, $cookies, $rootScope, CRM_Factory) {
   $scope.user = {
