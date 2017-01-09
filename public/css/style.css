@@ -36,6 +36,14 @@ textarea {
   margin-top: 20px;
 }
 
+/* Chips - Similar to Material Design */
+.chip {
+  border: 1px solid black;
+  border-radius: 15px;
+  padding: 5px 2px 5px 5px;
+  margin-right: 10px;
+}
+
 /*
  * Navigation Bar Styles
  */
@@ -149,6 +157,8 @@ i.fa-bars {
 .sidebar {
   border-right: 1px solid darkgrey;
 }
+
+
 
 
 /*

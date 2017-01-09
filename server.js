@@ -813,6 +813,32 @@ app.post("/account/add_contact", function(request, response) {
     });
 });
 
+// --------- Remove Contact from Account -------- //
+app.put("/account/remove_contact", function(request, response) {
+  let contactID = request.body.contact_id;
+  let accountID = request.body.account_id;
+  let queryAccount = { _id: accountID };
+
+  return Account.update(
+    queryAccount, {
+      $pullAll: {
+        contacts: [contactID]
+      }
+    }
+  )
+    .then(function(updatedAccount) {
+      console.log("Account updated successfully: ", updatedAccount);
+      response.json({
+        message: "Account updated successfully"
+      });
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error updating the account: ", error.stack);
+    });
+
+});
+
 
 ///////////// CONTACT ROUTES /////////////
 // ---------- Create Contacts --------- //

@@ -156,6 +156,20 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
+  // Remove contact from account
+  service.removeContactFromAccount = function(contactID, accountID) {
+    console.log("In the factory.  Here are the IDs sent from the edit account page: ", contactID, accountID);
+    return $http({
+      method: "PUT",
+      url: "/account/remove_contact",
+      data: {
+        contact_id: contactID,
+        account_id: accountID
+      }
+    });
+  };
+
+
   ////////////////////////////////////////////////////////////
   ///////////////////// CONTACT SERVICES /////////////////////
   ////////////////////////////////////////////////////////////
@@ -607,7 +621,6 @@ app.controller("EditAccountController", function($scope, $stateParams, $state, C
   // Call viewAccount after loading page
   $scope.viewAccount();
 
-
   $scope.searchContacts = function(event) {
     console.log("Event is: ", event);
     if (event.keyCode === 8) {
@@ -634,6 +647,21 @@ app.controller("EditAccountController", function($scope, $stateParams, $state, C
       .then(function(updated_information) {
         console.log("Here's the updated_information", updated_information);
         $scope.account.contacts_search = "";
+        // Reload account information after adding contact
+        $scope.viewAccount();
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error);
+      });
+  };
+
+  $scope.removeContactFromAccount = function(contactID, accountID) {
+    console.log("Clicked to remove contact");
+    console.log("Here's ID of the contact you clicked: ", contactID);
+    console.log("Here's the ID of the account you are viewing: ", accountID);
+    CRM_Factory.removeContactFromAccount(contactID, accountID)
+      .then(function(success) {
+        console.log("Here's the success", success);
         // Reload account information after adding contact
         $scope.viewAccount();
       })
