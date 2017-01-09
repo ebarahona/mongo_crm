@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h4><a ui-sref="calls">Call </a>&gt;&gt; {{ call.name }}</h4>
+
+      <!-- Split button -->
+      <div class="btn-group">
+        <button class="btn btn-primary btn-sm" type="button" name="button">Edit</button>
+        <!-- <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a ui-sref="">Delete</a></li>
+        </ul> -->
+      </div>
+
+      <hr>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-10 col-xs-offset-1">
+
+      <form class="form-horizontal">
+        <fieldset>
+          <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-8">
+              <input ng-model="call.name" name="name" type="text" class="form-control" id="name" placeholder="Name">
+            </div>
+          </div>
+
+          <table class="table table-responsive table-hover">
+            <tbody>
+              <tr ng-repeat="result in results">
+                <td ng-model="call.linked_to" ng-click="addResult(result._id, result.name, result.first_name, result.last_name)">{{ result.name }} {{ result.first_name }} {{ result.last_name }} - {{ result._id }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="form-group">
+            <label for="chosen_result" class="col-sm-2 control-label">Linked To</label>
+            <div class="col-sm-8">
+              <input ng-model="call.linked_to.name" name="chosen_result" type="text" class="form-control" id="chosen_result" placeholder="Linked To">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="status" class="col-sm-2 control-label">Status</label>
+            <div class="col-sm-8">
+              <input ng-model="call.status" class="form-control" type="text" name="status" id="status">
+
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="direction" class="col-sm-2 control-label">Direction</label>
+            <div class="col-sm-8">
+              <input ng-model="call.direction" type="text" class="form-control" name="direction" id="direction">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="start_date" class="col-sm-2 control-label">Start Date</label>
+            <div class="col-sm-8">
+              <input ng-model="call.start_date" name="start_date" type="text" class="form-control" id="start_date" placeholder="Start Date">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="end_date" class="col-sm-2 control-label">End Date</label>
+            <div class="col-sm-8">
+              <input ng-model="call.end_date" name="end_date" type="text" class="form-control" id="end_date" placeholder="End Date">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="col-sm-2 control-label">Description</label>
+            <div class="col-sm-8">
+              <textarea ng-model="call.description" name="description" placeholder="Description" rows="3"></textarea>
+            </div>
+          </div>
+
+          <!-- Not currently working. Uncomment after fixing -->
+          <!-- <div class="form-group">
+            <label for="call_image" class="col-sm-2 control-label">Account Image</label>
+            <div class="col-sm-8">
+              <input ng-model="call.account_image" name="account_image" type="file" class="form-control" id="account_image" placeholder="Account Image">
+            </div>
+          </div> -->
+        </fieldset>
+      </form>
+
+    </div>
+  </div>
+</div>

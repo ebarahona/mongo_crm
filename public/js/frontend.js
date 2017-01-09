@@ -12,7 +12,7 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 
   if ($rootScope.CRM_FactoryCookieData) {
     $rootScope.authToken = $rootScope.CRM_FactoryCookieData.data.token;
-    $rootScope.user = $rootScope.CRM_FactoryCookieData.data.user_information;
+    $rootScope.logged_user = $rootScope.CRM_FactoryCookieData.data.user_information;
   }
 
 
@@ -89,7 +89,7 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 
   // Create an account
   service.createAccount = function(account_info) {
-    var user_id = $rootScope.user._id;
+    var user_id = $rootScope.logged_user._id;
     console.log("ID of the user that clicked the save account button: ", user_id);
     console.log("Account info: ", account_info);
     return $http({
@@ -122,7 +122,7 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 
   // Update account
   service.updateAccount = function(account_info) {
-    var user_id = $rootScope.user._id;
+    var user_id = $rootScope.logged_user._id;
     console.log("I'm in the factory and will update: ", account_info);
     return $http({
       method: "PUT",
@@ -156,13 +156,27 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
+  // Remove contact from account
+  service.removeContactFromAccount = function(contactID, accountID) {
+    console.log("In the factory.  Here are the IDs sent from the edit account page: ", contactID, accountID);
+    return $http({
+      method: "PUT",
+      url: "/account/remove_contact",
+      data: {
+        contact_id: contactID,
+        account_id: accountID
+      }
+    });
+  };
+
+
   ////////////////////////////////////////////////////////////
   ///////////////////// CONTACT SERVICES /////////////////////
   ////////////////////////////////////////////////////////////
 
   // Create a contact
   service.createContact = function(contact_info) {
-    var user_id = $rootScope.user._id;
+    var user_id = $rootScope.logged_user._id;
     console.log("ID of the user that clicked the save contact button: ", user_id);
     console.log("Contact info: ", contact_info);
     return $http({
@@ -195,7 +209,7 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 
   // Update contact
   service.updateContact = function(contact_info) {
-    var user_id = $rootScope.user._id;
+    var user_id = $rootScope.logged_user._id;
     console.log("I'm in the factory and will update: ", contact_info);
     return $http({
       method: "PUT",
@@ -216,123 +230,123 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
-// Add account to contact
-service.addAccountToContact = function(accountID, contactID) {
-  console.log("In the factory.  Here are the IDs sent from the view contact page: ", accountID, contactID);
-  return $http({
-    method: "POST",
-    url: "/contact/add_account",
-    data: {
-      account_id: accountID,
-      contact_id: contactID
-    }
-  });
-};
+  // Add account to contact
+  service.addAccountToContact = function(accountID, contactID) {
+    console.log("In the factory.  Here are the IDs sent from the view contact page: ", accountID, contactID);
+    return $http({
+      method: "POST",
+      url: "/contact/add_account",
+      data: {
+        account_id: accountID,
+        contact_id: contactID
+      }
+    });
+  };
 
 
 ////////////////////////////////////////////////////////////
 ///////////////////// CALL SERVICES ///////////////////////
 ////////////////////////////////////////////////////////////
 
-// Create call
-service.createCall = function(callInfo) {
-  var user_id = $rootScope.user._id;
-  console.log("ID of the user that clicked the save contact button: ", user_id);
-  console.log("Call info: ", callInfo);
-  return $http({
-    method: "POST",
-    url: "/calls/create",
-    data: {
-      user_id: user_id,
-      call_info: callInfo
-    }
-  });
-};
+  // Create call
+  service.createCall = function(callInfo) {
+    var user_id = $rootScope.logged_user._id;
+    console.log("ID of the user that clicked the save contact button: ", user_id);
+    console.log("Call info: ", callInfo);
+    return $http({
+      method: "POST",
+      url: "/calls/create",
+      data: {
+        user_id: user_id,
+        call_info: callInfo
+      }
+    });
+  };
 
-// Show all calls
-service.showCalls = function() {
-  console.log("I'm in the factory");
-  return $http({
-    method: "GET",
-    url: "/calls"
-  });
-};
+  // Show all calls
+  service.showCalls = function() {
+    console.log("I'm in the factory");
+    return $http({
+      method: "GET",
+      url: "/calls"
+    });
+  };
 
-// View call
-service.viewCall = function(callID) {
-  console.log("I'm in the factory and I got this: ", callID);
-  return $http({
-    method: "GET",
-    url: "/call/view/" + callID,
-  });
-};
+  // View call
+  service.viewCall = function(callID) {
+    console.log("I'm in the factory and I got this: ", callID);
+    return $http({
+      method: "GET",
+      url: "/call/view/" + callID,
+    });
+  };
 
 
 ////////////////////////////////////////////////////////////
 ///////////////////// COMMENT SERVICES /////////////////////
 ////////////////////////////////////////////////////////////
-service.saveComment = function(comment, accountID) {
-  var user_id = $rootScope.user._id;
-  return $http({
-    method: "POST",
-    url: "/comments/create",
-    data: {
-      user_id: user_id,
-      comment_text: comment,
-      account_id: accountID
-    }
-  });
-};
+  service.saveComment = function(comment, accountID) {
+    var user_id = $rootScope.logged_user._id;
+    return $http({
+      method: "POST",
+      url: "/comments/create",
+      data: {
+        user_id: user_id,
+        comment_text: comment,
+        account_id: accountID
+      }
+    });
+  };
 
-service.viewComments = function(accountID) {
-  console.log("I got an account_id in the factory: ", accountID);
-  return $http({
-    method: "GET",
-    url: "/comments/view/" + accountID,
-  });
-};
+  service.viewComments = function(accountID) {
+    console.log("I got an account_id in the factory: ", accountID);
+    return $http({
+      method: "GET",
+      url: "/comments/view/" + accountID,
+    });
+  };
 
 
 ////////////////////////////////////////////////////////////
 ///////////////////// GENERAL SERVICES /////////////////////
 ////////////////////////////////////////////////////////////
-service.searchParent = function(searchInfo) {
-  var parent = searchInfo.selected_parent;
-  var searchTerm = searchInfo.linked_to_search;
-  var url = "/search_parent/" + parent + "/" + searchTerm;
+  service.searchParent = function(searchInfo) {
+    var parent = searchInfo.selected_parent;
+    var searchTerm = searchInfo.linked_to_search;
+    var url = "/search_parent/" + parent + "/" + searchTerm;
 
-  return $http({
-    method: "GET",
-    url: url
-  });
-};
+    return $http({
+      method: "GET",
+      url: url
+    });
+  };
 
-service.ViewUserCallsSmallView = function(searchID) {
-  console.log("ID to search: ", searchID);
+  service.ViewUserCallsSmallView = function(searchID) {
+    console.log("ID to search: ", searchID);
 
-  return $http({
-    method: "GET",
-    url: "/view/user/calls_small_view/" + searchID,
-  });
-};
+    return $http({
+      method: "GET",
+      url: "/view/user/calls_small_view/" + searchID,
+    });
+  };
 
-service.ViewAccountCallsSmallView = function(searchID) {
-  console.log("ID to search: ", searchID);
+  service.ViewAccountCallsSmallView = function(searchID) {
+    console.log("ID to search: ", searchID);
 
-  return $http({
-    method: "GET",
-    url: "/view/account/calls_small_view/" + searchID,
-  });
-};
+    return $http({
+      method: "GET",
+      url: "/view/account/calls_small_view/" + searchID,
+    });
+  };
 
-service.ViewContactCallsSmallView = function(searchID) {
-  console.log("ID to search: ", searchID);
+  service.ViewContactCallsSmallView = function(searchID) {
+    console.log("ID to search: ", searchID);
 
-  return $http({
-    method: "GET",
-    url: "/view/contact/calls_small_view/" + searchID,
-  });
-};
+    return $http({
+      method: "GET",
+      url: "/view/contact/calls_small_view/" + searchID,
+    });
+  };
 
 
 
@@ -360,34 +374,22 @@ app.controller("RegisterController", function($scope, $state, CRM_Factory) {
   $scope.user = {};
   $scope.register = function() {
     // var user_registration = $scope.user;
-    var user_registration = $scope.user;
-    var password2 = $scope.user.password2;
-    console.log("password2", password2);
-    console.log("user_registration: ", user_registration);
-    delete user_registration.password2;
-    CRM_Factory.register(user_registration)
-      .then(function(success) {
-        console.log("We were successful: ", success);
-        $state.go("login");
-      })
-      .catch(function(error) {
-        console.log("There was an error!!!", error.stack);
-      });
+    if ($scope.user.password === $scope.user.password2) {
+      var user_registration = $scope.user;
+      console.log("user_registration: ", user_registration);
+      CRM_Factory.register(user_registration)
+        .then(function(success) {
+          console.log("We were successful: ", success);
+          $state.go("login");
+        })
+        .catch(function(error) {
+          console.log("There was an error!!!", error.stack);
+        });
+    } else {
+      return;
+    }
   };
 });
-
-// Need to update later to have the avatar upload
-// app.controller("RegisterController", function($scope, $state, CRM_Factory) {
-//   console.log("I'm using the RegisterController");
-//   $scope.user = {};
-//   $scope.register = function() {
-//     console.log("I clicked the register button");
-//     var user_registration = $scope.user;
-//     console.log("User registration: ", user_registration);
-//     var image = $scope.user.profile_image;
-//     console.log("Image: ", image);
-//   };
-// });
 
 app.controller("LoginController", function($scope, $state, $cookies, $rootScope, CRM_Factory) {
   $scope.user = {
@@ -403,7 +405,7 @@ app.controller("LoginController", function($scope, $state, $cookies, $rootScope,
         console.log("We were successful: ", login_result);
         $cookies.putObject("cookieData", login_result);
         $rootScope.cookie_data = login_result;
-        $rootScope.user = login_result.data.user_information;
+        $rootScope.logged_user = login_result.data.user_information;
         $rootScope.authToken = login_result.data.token;
         // $route.reload();
         console.log("username", $scope.user.username);
@@ -446,18 +448,19 @@ app.controller("ViewUserController", function($scope, $state, $stateParams, $roo
 });
 
 app.controller("EditUserController", function($scope, $state, $stateParams, $rootScope, CRM_Factory, FileUploader) {
+
   var user_id = $stateParams.userID;
   console.log("user_id: ", user_id);
-  $scope.user = {};
-
+  // $scope.user = {};
   // Scroll to top when loading page (need this when coming from another page)
   document.body.scrollTop = document.documentElement.scrollTop = 0;
 
   $scope.viewUser = function() {
     CRM_Factory.viewUser(user_id)
       .then(function(user) {
+
         $scope.user = user.data.user[0];
-        console.log("Here's the user: ", $scope.user);
+        console.log("Here's the rootscope user: ", $scope.user);
         delete $scope.user.password;
         console.log("Here's the user: ", $scope.user);
       })
@@ -618,7 +621,6 @@ app.controller("EditAccountController", function($scope, $stateParams, $state, C
   // Call viewAccount after loading page
   $scope.viewAccount();
 
-
   $scope.searchContacts = function(event) {
     console.log("Event is: ", event);
     if (event.keyCode === 8) {
@@ -645,6 +647,21 @@ app.controller("EditAccountController", function($scope, $stateParams, $state, C
       .then(function(updated_information) {
         console.log("Here's the updated_information", updated_information);
         $scope.account.contacts_search = "";
+        // Reload account information after adding contact
+        $scope.viewAccount();
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error);
+      });
+  };
+
+  $scope.removeContactFromAccount = function(contactID, accountID) {
+    console.log("Clicked to remove contact");
+    console.log("Here's ID of the contact you clicked: ", contactID);
+    console.log("Here's the ID of the account you are viewing: ", accountID);
+    CRM_Factory.removeContactFromAccount(contactID, accountID)
+      .then(function(success) {
+        console.log("Here's the success", success);
         // Reload account information after adding contact
         $scope.viewAccount();
       })
@@ -770,7 +787,7 @@ app.controller("UserCommentsController", function($scope, $state, $stateParams, 
 
   $scope.saveComment = function() {
     var comment = $scope.comment;
-    var user_id = $scope.user._id;
+    var user_id = $scope.logged_user._id;
     console.log("Comment after clicking the save button: ", comment);
     console.log("User id: ", user_id);
     CRM_Factory.saveComment(comment, user_id)
@@ -1181,13 +1198,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "register",
     url: "/User/register",
-    templateUrl: "views/register.html",
+    templateUrl: "views/user/register.html",
     controller: "RegisterController"
   })
   .state({
     name: "login",
     url: "/User/login",
-    templateUrl: "views/login.html",
+    templateUrl: "views/user/login.html",
     controller: "LoginController"
   })
   .state({
@@ -1199,7 +1216,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_user",
     url: "/Users/view/{userID}",
-    templateUrl: "views/view_user.html",
+    templateUrl: "views/user/view_user.html",
     controller: "ViewUserController"
   })
   .state({
@@ -1211,7 +1228,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_user.calls",
     url: "/calls",
-    templateUrl: "views/calls/calls_small_view.html",
+    templateUrl: "views/call/calls_small_view.html",
     controller: "UserCallsSmallViewController"
   })
   .state({
@@ -1229,7 +1246,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "create_account",
     url: "/Account/create",
-    templateUrl: "views/create_account.html",
+    templateUrl: "views/account/create_account.html",
     controller: "CreateAccountController"
   })
   .state({
@@ -1247,31 +1264,31 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_account.calls",
     url: "/calls",
-    templateUrl: "views/calls/calls_small_view.html",
+    templateUrl: "views/call/calls_small_view.html",
     controller: "AccountCallsSmallViewController"
   })
   .state({
     name: "edit_account",
     url: "/Account/edit/{accountID}",
-    templateUrl: "views/edit_account.html",
+    templateUrl: "views/account/edit_account.html",
     controller: "EditAccountController"
   })
   .state({
     name: "contacts",
     url: "/Contacts",
-    templateUrl: "views/contacts.html",
+    templateUrl: "views/contact/contacts.html",
     controller: "ContactsController"
   })
   .state({
     name: "create_contact",
     url: "/Contact/create",
-    templateUrl: "views/create_contact.html",
+    templateUrl: "views/contact/create_contact.html",
     controller: "CreateContactController"
   })
   .state({
     name: "view_contact",
     url: "/Contact/view/{contactID}",
-    templateUrl: "views/view_contact.html",
+    templateUrl: "views/contact/view_contact.html",
     controller: "ViewContactController"
   })
   .state({
@@ -1283,31 +1300,31 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state({
     name: "view_contact.calls",
     url: "/calls",
-    templateUrl: "views/calls/calls_small_view.html",
+    templateUrl: "views/call/calls_small_view.html",
     controller: "ContactCallsSmallViewController"
   })
   .state({
     name: "edit_contact",
     url: "/Contact/edit/{contactID}",
-    templateUrl: "views/edit_contact.html",
+    templateUrl: "views/contact/edit_contact.html",
     controller: "EditContactController"
   })
   .state({
     name: "calls",
     url: "/Calls",
-    templateUrl: "views/calls.html",
+    templateUrl: "views/call/calls.html",
     controller: "CallsController"
   })
   .state({
     name: "create_call",
     url: "/Call/create",
-    templateUrl: "views/create_call.html",
+    templateUrl: "views/call/create_call.html",
     controller: "CreateCallController"
   })
   .state({
     name: "view_call",
     url: "/Call/view/{callID}",
-    templateUrl: "views/view_call.html",
+    templateUrl: "views/call/view_call.html",
     controller: "ViewCallController"
   })
   ;
