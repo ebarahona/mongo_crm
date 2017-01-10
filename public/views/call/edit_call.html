@@ -2,11 +2,11 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-sm-12">
-      <h4><a ui-sref="calls">Call </a><small><strong>&gt;&gt; create</strong></small></h4>
+    <div class="col-xs-12">
+      <h4><a ui-sref="calls">Calls </a>&gt;&gt; {{ call.name }}</h4>
 
       <button ng-click="saveCall()" class="btn btn-primary btn-sm" type="button" name="button">Save</button>
-      <button ui-sref="calls" class="btn btn-default btn-sm" type="button" name="button">Cancel</button>
+      <button ui-sref="view_call({callID: call._id})" class="btn btn-default btn-sm" type="button" name="button">Cancel</button>
       <hr>
     </div>
   </div>
@@ -49,15 +49,15 @@
           </table>
 
           <div class="form-group">
-            <label for="chosen_result" class="col-sm-2 control-label">Linked To</label>
+            <label for="linked_to.name" class="col-sm-2 control-label">Linked To</label>
             <div class="col-sm-8">
-              <input ng-model="call.chosen_result" name="chosen_result" type="text" class="form-control" id="chosen_result" placeholder="Linked To">
+              <input ng-model="call.linked_to.name" name="linked_to.name" type="text" class="form-control" id="linked_to.name" placeholder="Linked To">
             </div>
           </div>
 
           <div class="form-group">
             <div class="col-sm-8">
-              <input ng-model="call.chosen_result_id" name="chosen_result_id" type="hidden" class="form-control" id="chosen_result_id">
+              <input ng-model="call.linked_to.name_id" type="hidden" class="form-control" id="linked_to.nameid">
             </div>
           </div>
 
@@ -65,11 +65,14 @@
             <label for="status" class="col-sm-2 control-label">Status</label>
             <div class="col-sm-8">
 
-              <select ng-model="call.selected_status"
-                      ng-options="x for x in call_statuses"
+              <select ng-model="call.status"
+                      name="status"
                       class="form-control"
-                      ng-required="true">
-                <option disabled selected value> -- Choose Status -- </option>
+                      id="status">
+                <option disabled selected value> -- select an option -- </option>
+                <option>Planned</option>
+                <option>Held</option>
+                <option>Not Held</option>
               </select>
 
             </div>
@@ -91,21 +94,21 @@
           <div class="form-group">
             <label for="start_date" class="col-sm-2 control-label">Start Date</label>
             <div class="col-sm-8">
-              <input ng-model="call.start_date" name="start_date" type="datetime-local" class="form-control" id="start_date" placeholder="Start Date">
+              <input ng-model="call.start_date" name="start_date" type="text" class="form-control" id="start_date" placeholder="Start Date">
             </div>
           </div>
 
           <div class="form-group">
             <label for="end_date" class="col-sm-2 control-label">End Date</label>
             <div class="col-sm-8">
-              <input ng-model="call.end_date" name="end_date" type="datetime-local" class="form-control" id="end_date" placeholder="End Date">
+              <input ng-model="call.end_date" name="end_date" type="text" class="form-control" id="end_date" placeholder="End Date">
             </div>
           </div>
 
           <div class="form-group">
             <label for="description" class="col-sm-2 control-label">Description</label>
             <div class="col-sm-8">
-              <textarea ng-model="call.description" name="description" rows="3" placeholder="Description"></textarea>
+              <textarea ng-model="call.description" name="description" placeholder="Description" rows="3"></textarea>
             </div>
           </div>
 

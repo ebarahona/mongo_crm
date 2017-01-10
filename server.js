@@ -1197,6 +1197,45 @@ app.get("/call/view/:callID", function(request, response) {
   });
 });
 
+// ------------ Update Call ---------- //
+app.put("/call/update", function(request, response) {
+  let user_id = request.body.user_id;
+  let call_id = request.body.call_info._id;
+  console.log("\n\n\nThis is the request sent from the front end: ", request.body);
+  console.log("This is the call id: ", call_id);
+
+  return Call.update({
+      _id: call_id
+    },
+    {
+      $set: {
+         name: request.body.call_info.name,
+            linked_to: {
+              selected: request.body.call_info.linked_to.selected,
+              name: request.body.call_info.linked_to.name,
+              name_id: request.body.call_info.linked_to.name_id
+            },
+            status: request.body.call_info.status,
+            direction: request.body.call_info.direction,
+            start_date: request.body.call_info.start_date,
+            end_date: request.body.call_info.end_date,
+            description: request.body.call_info.description,
+            updated_at: new Date(),
+            updated_by_ID: user_id
+      }
+    })
+      .then(function(updatedCall) {
+        console.log("Call updated successfully: ", updatedCall);
+        response.json({
+          message: "Call updated successfully"
+        });
+      })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error updating the call: ", error.stack);
+    });
+});
+
 
 ////////////// MEETING ROUTES //////////////
 // ----------- Create Meeting ---------- //
