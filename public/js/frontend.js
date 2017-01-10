@@ -514,7 +514,7 @@ app.controller("LoginController", function($scope, $state, $cookies, $rootScope,
         $rootScope.authToken = login_result.data.token;
         // $route.reload();
         console.log("username", $scope.user.username);
-        $state.go("home");
+        $state.go("users");
       })
       .catch(function(error) {
         console.log("There was an error!!!", error);
