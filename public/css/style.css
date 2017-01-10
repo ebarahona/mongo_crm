@@ -41,6 +41,13 @@ textarea {
   margin-top: 20px;
 }
 
+/*
+ * Calls view (small view)
+ */
+.click-to-follow {
+  cursor: pointer;
+}
+
 /* Chips - Similar to Material Design */
 .chip {
   border: 1px solid black;

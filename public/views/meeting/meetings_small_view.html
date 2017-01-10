@@ -9,7 +9,9 @@
         <div class="form-group">
           <label for="name" class="col-xs-2 col-sm-2 control-label">Name</label>
           <div class="col-xs-10 col-sm-6">
-            <input ng-value="meeting.name" name="name" type="text" class="form-control" id="name" placeholder="Name" disabled>
+            <a ui-sref="view_meeting({meetingID: meeting._id})">
+              <input ng-value="meeting.name" name="name" type="text" class="form-control click-to-follow" id="name" placeholder="Name">
+            </a>
           </div>
         </div>
         <div class="form-group">
