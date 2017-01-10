@@ -5,6 +5,11 @@
 /*
  * General Styles
  */
+/* Drop body down due to fixed navbar */
+body {
+  margin-top: 75px;
+}
+
 /* Search fields */
 #search {
   padding: 20px 0 40px 0;

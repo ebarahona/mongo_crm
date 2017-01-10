@@ -1329,6 +1329,45 @@ app.get("/meeting/view/:meetingID", function(request, response) {
   });
 });
 
+// ------------ Update Meeting ---------- //
+app.put("/meeting/update", function(request, response) {
+  let user_id = request.body.user_id;
+  let meeting_id = request.body.meeting_info._id;
+  console.log("\n\n\nThis is the request sent from the front end: ", request.body);
+  console.log("This is the meeting id: ", meeting_id);
+
+  return Meeting.update({
+      _id: meeting_id
+    },
+    {
+      $set: {
+         name: request.body.meeting_info.name,
+            linked_to: {
+              selected: request.body.meeting_info.linked_to.selected,
+              name: request.body.meeting_info.linked_to.name,
+              name_id: request.body.meeting_info.linked_to.name_id
+            },
+            status: request.body.meeting_info.status,
+            start_date: request.body.meeting_info.start_date,
+            end_date: request.body.meeting_info.end_date,
+            description: request.body.meeting_info.description,
+            updated_at: new Date(),
+            updated_by_ID: user_id
+      }
+    })
+      .then(function(updatedMeeting) {
+        console.log("Meeting updated successfully: ", updatedMeeting);
+        response.json({
+          message: "Meeting updated successfully"
+        });
+      })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error updating the meeting: ", error.stack);
+    });
+});
+
+
 
 ////////////// COMMENT ROUTES /////////////
 // ----------- Create Comment ---------- //

@@ -346,6 +346,21 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
   };
 
 
+  // Update meeting
+  service.updateMeeting = function(meeting_info) {
+    var user_id = $rootScope.logged_user._id;
+    console.log("I'm in the factory and will update: ", meeting_info);
+    return $http({
+      method: "PUT",
+      url: "/meeting/update",
+      data: {
+        user_id: user_id,
+        meeting_info: meeting_info
+      }
+    });
+  };
+
+
 ////////////////////////////////////////////////////////////
 ///////////////////// COMMENT SERVICES /////////////////////
 ////////////////////////////////////////////////////////////
@@ -1470,6 +1485,110 @@ app.controller("ViewMeetingController", function($scope, $stateParams, CRM_Facto
   });
 });
 
+app.controller("EditMeetingController", function($scope, $stateParams, $state, CRM_Factory) {
+  console.log("I'm inside the EditMeetingController");
+  console.log("stateParams", $stateParams);
+
+  $scope.meeting_parents = ["Account", "Contact"];
+  $scope.meeting_statuses = ["Planned", "Held", "Not Held"];
+
+  // Scroll to top when loading page (need this when coming from an account)
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+  var meeting_id = $stateParams.meetingID;
+  //
+  CRM_Factory.viewMeeting(meeting_id)
+  .then(function(meeting_info) {
+    console.log("\n\nThis is the meeting_info: ", meeting_info);
+    $scope.meeting = meeting_info.data.meeting;
+    $scope.meeting_owner = $scope.meeting.ownerID;
+    console.log("\nThe meeting: ", $scope.meeting);
+    console.log("\nThe owner: ", $scope.meeting_owner);
+  })
+  .catch(function(error) {
+    console.log("There was an error!!!", error);
+  });
+  //
+  $scope.searchParent = function(event) {
+    console.log("Event is: ", event);
+    if (event.keyCode === 8) {
+      // console.log("This is the event.keyCode 8: ", event);
+      $scope.results = "";
+    } else if (event.keyCode === 16) {
+      // console.log("This is the event.keyCode 16: ", event);
+    } else {
+      var selected_parent = $scope.meeting.selected_parent;
+      var linked_to_search = $scope.meeting.linked_to_search;
+      var chosen_result_id = $scope.meeting.chosen_result_id;
+      var searchInfo = {
+        selected_parent: selected_parent,
+        linked_to_search: linked_to_search,
+        chosen_result_id: chosen_result_id
+      };
+      console.log("searchInfo: ", searchInfo);
+      CRM_Factory.searchParent(searchInfo)
+        .then(function(response) {
+          console.log("Here is the response: ", response);
+          var type = response.data.type;
+          console.log("This is the type: ", type);
+          $scope.results = response.data.results;
+          console.log("These are the results: ", $scope.results);
+        })
+        .catch(function(error) {
+          console.log("There was an error!!!", error);
+        });
+    }
+  };
+
+  $scope.addResult = function(resultID, resultName, resultFirstName, resultLastName) {
+    console.log("Clicked the chosen result: ", resultID, resultName, resultFirstName, resultLastName);
+    // Clear out search area
+    $scope.meeting.linked_to_search = "";
+    // Clear out the results
+    $scope.results = "";
+    $scope.resultID = resultID;
+    if (resultName) {
+      console.log("I am account");
+      $scope.meeting.chosen_result = resultName;
+      $scope.meeting.linked_to.name = $scope.meeting.chosen_result;
+      $scope.meeting.chosen_result_id = resultID;
+      $scope.meeting.linked_to.name_id = $scope.meeting.chosen_result_id;
+      console.log($scope.meeting.chosen_result);
+    } else {
+      console.log("I am a contact");
+      var first_name = resultFirstName;
+      var last_name = resultLastName;
+      $scope.meeting.chosen_result = first_name + " " + last_name;
+      $scope.meeting.linked_to.name = $scope.meeting.chosen_result;
+      $scope.meeting.chosen_result_id = resultID;
+      $scope.meeting.linked_to.name_id = $scope.meeting.chosen_result_id;
+      console.log($scope.meeting.chosen_result);
+    }
+  };
+
+  $scope.clearFields = function() {
+    console.log("I'm clearing the fields");
+    $scope.meeting.linked_to_search = "";
+    // $scope.results = "";
+    $scope.meeting.chosen_result = "";
+  };
+
+  $scope.saveMeeting = function() {
+    var meeting_information = $scope.meeting;
+    console.log("Meeting information after save: ", meeting_information);
+    CRM_Factory.updateMeeting(meeting_information)
+      .then(function(success) {
+        console.log("\n\n\nWe were successful: ", success);
+        console.log("\n\nmeeting_information._id: ", meeting_information._id);
+        // Go back to view the updated meeting
+        $state.go("view_meeting", {meetingID: meeting_information._id});
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+
+});
 
 
 
@@ -1641,6 +1760,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Meeting/view/{meetingID}",
     templateUrl: "views/meeting/view_meeting.html",
     controller: "ViewMeetingController"
+  })
+  .state({
+    name: "edit_meeting",
+    url: "/Meeting/edit/{meetingID}",
+    templateUrl: "views/meeting/edit_meeting.html",
+    controller: "EditMeetingController"
   })
   ;
 
