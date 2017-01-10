@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<div class="container">
+  <h4 ng-show="meetings.length > 0">Below are all your meetings</h4>
+  <hr>
+  <div ng-repeat="meeting in meetings" class="row bottom-spacing">
+    <form class="form-horizontal">
+      <fieldset>
+        <div class="form-group">
+          <label for="name" class="col-xs-2 col-sm-2 control-label">Name</label>
+          <div class="col-xs-10 col-sm-6">
+            <input ng-value="meeting.name" name="name" type="text" class="form-control" id="name" placeholder="Name" disabled>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="linked_to" class="col-xs-2 col-sm-2 control-label">Linked To</label>
+          <div class="col-xs-10 col-sm-6">
+            <input ng-value="meeting.linked_to.name" name="linked_to" type="text" class="form-control" id="linked_to" placeholder="Linked To" disabled>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="status" class="col-xs-2 col-sm-2 control-label">Status</label>
+          <div class="col-xs-10 col-sm-6">
+            <input ng-value="meeting.status" name="status" type="text" class="form-control" id="status" placeholder="Status" disabled>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="start_date" class="col-xs-2 col-sm-2 control-label">Start Date</label>
+          <div class="col-xs-10 col-sm-6">
+            <input ng-value="meeting.start_date | date:'MMM dd, yyyy @ h:mma'" name="start_date" type="text" class="form-control" id="start_date" placeholder="Start Date" disabled>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+
+</div>
