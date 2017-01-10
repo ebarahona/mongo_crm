@@ -1511,6 +1511,24 @@ app.get("/view/user/calls_small_view/:searchID", function(request, response) {
     })
 });
 
+// ---------- View Meetings for Users --------- //
+app.get("/view/user/meetings_small_view/:searchID", function(request, response) {
+  let searchID = request.params.searchID;
+  console.log("I'm in the backend with this searchID: ", searchID);
+
+  Meeting.find({ ownerID: searchID }).sort({status: -1})
+    .then(function(meetings) {
+      console.log("Meetings: ", meetings);
+      response.json({
+        meetings: meetings
+      })
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error looking for the information: ", error.stack);
+    })
+});
+
 // ---------- View Calls for Accounts --------- //
 app.get("/view/account/calls_small_view/:searchID", function(request, response) {
   let searchID = request.params.searchID;
@@ -1532,6 +1550,28 @@ app.get("/view/account/calls_small_view/:searchID", function(request, response) 
     })
 });
 
+// ---------- View Meetings for Accounts --------- //
+app.get("/view/account/meetings_small_view/:searchID", function(request, response) {
+  let searchID = request.params.searchID;
+  console.log("I'm in the backend with this searchID: ", searchID);
+
+  // Search for embeded object inside an object(s)
+  Meeting.find({
+    "linked_to.name_id": searchID
+  })
+    .then(function(meetings) {
+      console.log("Meetings: ", meetings);
+      response.json({
+        meetings: meetings
+      })
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error looking for the information: ", error.stack);
+    })
+});
+
+// ---------- View Calls for Contacts --------- //
 app.get("/view/contact/calls_small_view/:searchID", function(request, response) {
   let searchID = request.params.searchID;
   console.log("I'm in the backend with this searchID: ", searchID);
@@ -1552,6 +1592,26 @@ app.get("/view/contact/calls_small_view/:searchID", function(request, response) 
     })
 });
 
+// ---------- View Meetings for Contacts --------- //
+app.get("/view/contact/meetings_small_view/:searchID", function(request, response) {
+  let searchID = request.params.searchID;
+  console.log("I'm in the backend with this searchID: ", searchID);
+
+  // Search for embeded object inside an object(s)
+  Meeting.find({
+    "linked_to.name_id": searchID
+  })
+    .then(function(meetings) {
+      console.log("Meetings: ", meetings);
+      response.json({
+        meetings: meetings
+      })
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("There was an error looking for the information: ", error.stack);
+    })
+});
 
 
 

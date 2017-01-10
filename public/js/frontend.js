@@ -409,12 +409,30 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
+  service.ViewUserMeetingsSmallView = function(searchID) {
+    console.log("ID to search: ", searchID);
+
+    return $http({
+      method: "GET",
+      url: "/view/user/meetings_small_view/" + searchID,
+    });
+  };
+
   service.ViewAccountCallsSmallView = function(searchID) {
     console.log("ID to search: ", searchID);
 
     return $http({
       method: "GET",
       url: "/view/account/calls_small_view/" + searchID,
+    });
+  };
+
+  service.ViewAccountMeetingsSmallView = function(searchID) {
+    console.log("ID to search: ", searchID);
+
+    return $http({
+      method: "GET",
+      url: "/view/account/meetings_small_view/" + searchID,
     });
   };
 
@@ -427,6 +445,14 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
+  service.ViewContactMeetingsSmallView = function(searchID) {
+    console.log("ID to search: ", searchID);
+
+    return $http({
+      method: "GET",
+      url: "/view/contact/meetings_small_view/" + searchID,
+    });
+  };
 
 
 
@@ -1333,6 +1359,20 @@ app.controller("UserCallsSmallViewController", function($scope, $stateParams, CR
     });
 });
 
+app.controller("UserMeetingsSmallViewController", function($scope, $stateParams, CRM_Factory) {
+  var userID = $stateParams.userID;
+  console.log("Using the UserMeetingsSmallViewController: ", userID);
+
+  CRM_Factory.ViewUserMeetingsSmallView(userID)
+    .then(function(meetings) {
+      console.log("meetings: ", meetings);
+      $scope.meetings = meetings.data.meetings;
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
+});
+
 app.controller("AccountCallsSmallViewController", function($scope, $stateParams, CRM_Factory) {
   var accountID = $stateParams.accountID;
   console.log("Using the AccountCallsSmallViewController: ", accountID);
@@ -1347,6 +1387,20 @@ app.controller("AccountCallsSmallViewController", function($scope, $stateParams,
     });
 });
 
+app.controller("AccountMeetingsSmallViewController", function($scope, $stateParams, CRM_Factory) {
+  var accountID = $stateParams.accountID;
+  console.log("Using the AccountMeetingsSmallViewController: ", accountID);
+
+  CRM_Factory.ViewAccountMeetingsSmallView(accountID)
+    .then(function(meetings) {
+      console.log("meetings: ", meetings);
+      $scope.meetings = meetings.data.meetings;
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
+});
+
 app.controller("ContactCallsSmallViewController", function($scope, $stateParams, CRM_Factory) {
   var contactID = $stateParams.contactID;
   console.log("Using the ContactCallsSmallViewController: ", contactID);
@@ -1355,6 +1409,20 @@ app.controller("ContactCallsSmallViewController", function($scope, $stateParams,
     .then(function(calls) {
       console.log("calls: ", calls);
       $scope.calls = calls.data.calls;
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
+});
+
+app.controller("ContactMeetingsSmallViewController", function($scope, $stateParams, CRM_Factory) {
+  var contactID = $stateParams.contactID;
+  console.log("Using the ContactMeetingsSmallViewController: ", contactID);
+
+  CRM_Factory.ViewContactMeetingsSmallView(contactID)
+    .then(function(meetings) {
+      console.log("meetings: ", meetings);
+      $scope.meetings = meetings.data.meetings;
     })
     .catch(function(error) {
       console.log("There was an error!!!", error);
@@ -1642,6 +1710,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: "UserCallsSmallViewController"
   })
   .state({
+    name: "view_user.meetings",
+    url: "/meetings",
+    templateUrl: "views/meeting/meetings_small_view.html",
+    controller: "UserMeetingsSmallViewController"
+  })
+  .state({
     name: "edit_user",
     url: "/User/edit/{userID}",
     templateUrl: "views/user/edit_user.html",
@@ -1678,6 +1752,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     controller: "AccountCallsSmallViewController"
   })
   .state({
+    name: "view_account.meetings",
+    url: "/meetings",
+    templateUrl: "views/meeting/meetings_small_view.html",
+    controller: "AccountMeetingsSmallViewController"
+  })
+  .state({
     name: "edit_account",
     url: "/Account/edit/{accountID}",
     templateUrl: "views/account/edit_account.html",
@@ -1712,6 +1792,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/calls",
     templateUrl: "views/call/calls_small_view.html",
     controller: "ContactCallsSmallViewController"
+  })
+  .state({
+    name: "view_contact.meetings",
+    url: "/meetings",
+    templateUrl: "views/meeting/meetings_small_view.html",
+    controller: "ContactMeetingsSmallViewController"
   })
   .state({
     name: "edit_contact",
