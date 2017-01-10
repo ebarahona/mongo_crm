@@ -280,6 +280,34 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     });
   };
 
+  // Update contact
+  service.updateContact = function(contact_info) {
+    var user_id = $rootScope.logged_user._id;
+    console.log("I'm in the factory and will update: ", contact_info);
+    return $http({
+      method: "PUT",
+      url: "/contact/update",
+      data: {
+        user_id: user_id,
+        contact_info: contact_info
+      }
+    });
+  };
+
+  // Update call
+  service.updateCall = function(call_info) {
+    var user_id = $rootScope.logged_user._id;
+    console.log("I'm in the factory and will update: ", call_info);
+    return $http({
+      method: "PUT",
+      url: "/call/update",
+      data: {
+        user_id: user_id,
+        call_info: call_info
+      }
+    });
+  };
+
 
 ////////////////////////////////////////////////////////////
 //////////////////// MEETING SERVICES //////////////////////
@@ -1171,6 +1199,111 @@ app.controller("ViewCallController", function($scope, $stateParams, CRM_Factory)
   // };
 });
 
+app.controller("EditCallController", function($scope, $stateParams, $state, CRM_Factory) {
+  console.log("I'm inside the EditCallController");
+  console.log("stateParams", $stateParams);
+
+  $scope.call_parents = ["Account", "Contact"];
+  $scope.call_statuses = ["Planned", "Held", "Not Held"];
+
+  // Scroll to top when loading page (need this when coming from an account)
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+  var call_id = $stateParams.callID;
+  //
+  CRM_Factory.viewCall(call_id)
+  .then(function(call_info) {
+    console.log("\n\nThis is the call_info: ", call_info);
+    $scope.call = call_info.data.call;
+    $scope.call_owner = $scope.call.ownerID;
+    console.log("\nThe call: ", $scope.call);
+    console.log("\nThe owner: ", $scope.call_owner);
+  })
+  .catch(function(error) {
+    console.log("There was an error!!!", error);
+  });
+
+  $scope.searchParent = function(event) {
+    console.log("Event is: ", event);
+    if (event.keyCode === 8) {
+      // console.log("This is the event.keyCode 8: ", event);
+      $scope.results = "";
+    } else if (event.keyCode === 16) {
+      // console.log("This is the event.keyCode 16: ", event);
+    } else {
+      var selected_parent = $scope.call.selected_parent;
+      var linked_to_search = $scope.call.linked_to_search;
+      var chosen_result_id = $scope.call.chosen_result_id;
+      var searchInfo = {
+        selected_parent: selected_parent,
+        linked_to_search: linked_to_search,
+        chosen_result_id: chosen_result_id
+      };
+      console.log("searchInfo: ", searchInfo);
+      CRM_Factory.searchParent(searchInfo)
+        .then(function(response) {
+          console.log("Here is the response: ", response);
+          var type = response.data.type;
+          console.log("This is the type: ", type);
+          $scope.results = response.data.results;
+          console.log("These are the results: ", $scope.results);
+        })
+        .catch(function(error) {
+          console.log("There was an error!!!", error);
+        });
+    }
+  };
+
+  $scope.addResult = function(resultID, resultName, resultFirstName, resultLastName) {
+    console.log("Clicked the chosen result: ", resultID, resultName, resultFirstName, resultLastName);
+    // Clear out search area
+    $scope.call.linked_to_search = "";
+    // Clear out the results
+    $scope.results = "";
+    $scope.resultID = resultID;
+    if (resultName) {
+      console.log("I am account");
+      $scope.call.chosen_result = resultName;
+      $scope.call.linked_to.name = $scope.call.chosen_result;
+      $scope.call.chosen_result_id = resultID;
+      $scope.call.linked_to.name_id = $scope.call.chosen_result_id;
+      console.log($scope.call.chosen_result);
+    } else {
+      console.log("I am a contact");
+      var first_name = resultFirstName;
+      var last_name = resultLastName;
+      $scope.call.chosen_result = first_name + " " + last_name;
+      $scope.call.linked_to.name = $scope.call.chosen_result;
+      $scope.call.chosen_result_id = resultID;
+      $scope.call.linked_to.name_id = $scope.call.chosen_result_id;
+      console.log($scope.call.chosen_result);
+    }
+  };
+
+  $scope.clearFields = function() {
+    console.log("I'm clearing the fields");
+    $scope.call.linked_to_search = "";
+    // $scope.results = "";
+    $scope.call.chosen_result = "";
+  };
+
+  $scope.saveCall = function() {
+    var call_information = $scope.call;
+    console.log("Call information after save: ", call_information);
+    CRM_Factory.updateCall(call_information)
+      .then(function(success) {
+        console.log("\n\n\nWe were successful: ", success);
+        console.log("\n\ncall_information._id: ", call_information._id);
+        // Go back to view the updated call
+        $state.go("view_call", {callID: call_information._id});
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+
+});
+
 app.controller("UserCallsSmallViewController", function($scope, $stateParams, CRM_Factory) {
   var userID = $stateParams.userID;
   console.log("Using the UserCallsSmallViewController: ", userID);
@@ -1484,6 +1617,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Call/view/{callID}",
     templateUrl: "views/call/view_call.html",
     controller: "ViewCallController"
+  })
+  .state({
+    name: "edit_call",
+    url: "/Call/edit/{callID}",
+    templateUrl: "views/call/edit_call.html",
+    controller: "EditCallController"
   })
   .state({
     name: "meetings",
