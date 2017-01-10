@@ -247,7 +247,6 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
 ////////////////////////////////////////////////////////////
 ///////////////////// CALL SERVICES ///////////////////////
 ////////////////////////////////////////////////////////////
-
   // Create call
   service.createCall = function(callInfo) {
     var user_id = $rootScope.logged_user._id;
@@ -278,6 +277,43 @@ app.factory("CRM_Factory", function($http, $state, $rootScope, $cookies) {
     return $http({
       method: "GET",
       url: "/call/view/" + callID,
+    });
+  };
+
+
+////////////////////////////////////////////////////////////
+//////////////////// MEETING SERVICES //////////////////////
+////////////////////////////////////////////////////////////
+  // Create meeting
+  service.createMeeting = function(meetingInfo) {
+    var user_id = $rootScope.logged_user._id;
+    console.log("ID of the user that clicked the save contact button: ", user_id);
+    console.log("Meeting info: ", meetingInfo);
+    return $http({
+      method: "POST",
+      url: "/meetings/create",
+      data: {
+        user_id: user_id,
+        meeting_info: meetingInfo
+      }
+    });
+  };
+
+  // Show all meetings
+  service.showMeetings = function() {
+    console.log("I'm in the factory trying to view all the meetings");
+    return $http({
+      method: "GET",
+      url: "/meetings"
+    });
+  };
+
+  // View meeting
+  service.viewMeeting = function(meetingID) {
+    console.log("I'm in the factory and I got this ID: ", meetingID);
+    return $http({
+      method: "GET",
+      url: "/meeting/view/" + meetingID,
     });
   };
 
@@ -1135,8 +1171,6 @@ app.controller("ViewCallController", function($scope, $stateParams, CRM_Factory)
   // };
 });
 
-
-//////////// CALLS-SPECIFIC CONTROLLERS ///////////
 app.controller("UserCallsSmallViewController", function($scope, $stateParams, CRM_Factory) {
   var userID = $stateParams.userID;
   console.log("Using the UserCallsSmallViewController: ", userID);
@@ -1177,6 +1211,130 @@ app.controller("ContactCallsSmallViewController", function($scope, $stateParams,
     .catch(function(error) {
       console.log("There was an error!!!", error);
     });
+});
+
+
+//////////// MEETING-SPECIFIC CONTROLLERS ///////////
+app.controller("MeetingsController", function($scope, $state, CRM_Factory) {
+  console.log("I'm using the MeetingsController.  Yay!");
+
+  $scope.createMeeting = function() {
+    console.log("Clicked the createMeeting button");
+    $state.go("create_meeting");
+  };
+
+  CRM_Factory.showMeetings()
+    .then(function(meetings) {
+      $scope.meetings = meetings.data.meetings;
+      console.log("Meetings from backend:",  $scope.meetings);
+      // $state.go("calls");
+    })
+    .catch(function(error) {
+      console.log("There was an error!!!", error);
+    });
+});
+
+app.controller("CreateMeetingController", function($scope, $state, CRM_Factory) {
+  console.log("I'm in the CreateMeetingController");
+  // $scope.meeting.selected_parent = "";
+  $scope.meeting_parents = ["Account", "Contact"];
+  $scope.meeting_statuses = ["Planned", "Held", "Not Held"];
+
+  $scope.searchParent = function(event) {
+    console.log("Event is: ", event);
+    if (event.keyCode === 8) {
+      // console.log("This is the event.keyCode 8: ", event);
+      $scope.results = "";
+    } else if (event.keyCode === 16) {
+      // console.log("This is the event.keyCode 16: ", event);
+    } else {
+      var selected_parent = $scope.meeting.selected_parent;
+      var linked_to_search = $scope.meeting.linked_to_search;
+      var chosen_result_id = $scope.meeting.chosen_result_id;
+      var searchInfo = {
+        selected_parent: selected_parent,
+        linked_to_search: linked_to_search,
+        chosen_result_id: chosen_result_id
+      };
+      console.log("searchInfo: ", searchInfo);
+      CRM_Factory.searchParent(searchInfo)
+        .then(function(response) {
+          console.log("Here is the response: ", response);
+          var type = response.data.type;
+          console.log("This is the type: ", type);
+          $scope.results = response.data.results;
+          console.log("These are the results: ", $scope.results);
+        })
+        .catch(function(error) {
+          console.log("There was an error!!!", error);
+        });
+    }
+  };
+
+  $scope.addResult = function(resultID, resultName, resultFirstName, resultLastName) {
+    console.log("Clicked the chosen result: ", resultID, resultName, resultFirstName, resultLastName);
+    // Clear out search area
+    $scope.meeting.linked_to_search = "";
+    // Clear out the results
+    $scope.results = "";
+    $scope.resultID = resultID;
+    if (resultName) {
+      console.log("I am account");
+      $scope.meeting.chosen_result = resultName;
+      $scope.meeting.chosen_result_id = resultID;
+      console.log($scope.meeting.chosen_result);
+    } else {
+      console.log("I am a contact");
+      var first_name = resultFirstName;
+      var last_name = resultLastName;
+      $scope.meeting.chosen_result = first_name + " " + last_name;
+      $scope.meeting.chosen_result_id = resultID;
+      console.log($scope.meeting.chosen_result);
+    }
+  };
+
+  $scope.clearFields = function() {
+    console.log("I'm clearing the fields");
+    $scope.meeting.linked_to_search = "";
+    // $scope.results = "";
+    $scope.meeting.chosen_result = "";
+  };
+
+  $scope.saveMeeting = function() {
+    console.log("Clicked the save button");
+    var meeting_information = $scope.meeting;
+    console.log("Here is the meeting_information: ", meeting_information);
+    CRM_Factory.createMeeting(meeting_information)
+      .then(function(success) {
+        console.log("We were successful: ", success);
+        $state.go("meetings");
+      })
+      .catch(function(error) {
+        console.log("There was an error!!!", error.stack);
+      });
+  };
+});
+
+app.controller("ViewMeetingController", function($scope, $stateParams, CRM_Factory) {
+  console.log("I'm inside the ViewMeetingController");
+  console.log("stateParams", $stateParams);
+
+  // Scroll to top when loading page (need this when coming from an account)
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+  var meeting_id = $stateParams.meetingID;
+
+  CRM_Factory.viewMeeting(meeting_id)
+  .then(function(meeting_info) {
+    console.log("\n\nThis is the meeting_info: ", meeting_info);
+    $scope.meeting = meeting_info.data.meeting;
+    // $scope.meeting_accounts = meeting_info.data.meeting_accounts;
+    console.log("\nThe meeting: ", $scope.meeting);
+    // console.log("\nThe accounts: ", $scope.meeting_accounts);
+  })
+  .catch(function(error) {
+    console.log("There was an error!!!", error);
+  });
 });
 
 
@@ -1326,6 +1484,24 @@ app.config(function($stateProvider, $urlRouterProvider) {
     url: "/Call/view/{callID}",
     templateUrl: "views/call/view_call.html",
     controller: "ViewCallController"
+  })
+  .state({
+    name: "meetings",
+    url: "/Meetings",
+    templateUrl: "views/meeting/meetings.html",
+    controller: "MeetingsController"
+  })
+  .state({
+    name: "create_meeting",
+    url: "/Meeting/create",
+    templateUrl: "views/meeting/create_meeting.html",
+    controller: "CreateMeetingController"
+  })
+  .state({
+    name: "view_meeting",
+    url: "/Meeting/view/{meetingID}",
+    templateUrl: "views/meeting/view_meeting.html",
+    controller: "ViewMeetingController"
   })
   ;
 

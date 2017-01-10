@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h4><a ui-sref="meetings">Meeting </a><small><strong>&gt;&gt; create</strong></small></h4>
+
+      <button ng-click="saveMeeting()" class="btn btn-primary btn-sm" type="button" name="button">Save</button>
+      <button ui-sref="meetings" class="btn btn-default btn-sm" type="button" name="button">Cancel</button>
+      <hr>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-10 col-xs-offset-1">
+
+      <form class="form-horizontal">
+        <fieldset>
+          <div class="form-group">
+            <label for="name" class="col-lg-2 control-label">Name</label>
+            <div class="col-lg-8">
+              <input ng-model="meeting.name" name="name" type="text" class="form-control" id="name" placeholder="Name">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="meeting_parent" class="col-lg-2 control-label">Choose Linked To</label>
+            <div class="col-lg-3">
+              <select ng-model="meeting.selected_parent"
+                      ng-options="x for x in meeting_parents"
+                      ng-change="clearFields()"
+                      class="form-control"
+                      ng-required="true">
+                <option disabled selected value> -- Choose Linked To -- </option>
+              </select>
+            </div>
+
+            <div class="col-lg-5">
+              <input ng-model="meeting.linked_to_search" ng-keydown="searchParent($event)" name="linked_to_search" type="text" class="form-control" id="linked_to_search" placeholder="Linked To Search">
+            </div>
+          </div>
+
+          <table class="table table-responsive table-hover">
+            <tbody>
+              <tr ng-repeat="result in results">
+                <td ng-model="meeting.linked_to" ng-click="addResult(result._id, result.name, result.first_name, result.last_name)">{{ result.name }} {{ result.first_name }} {{ result.last_name }} - {{ result._id }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="form-group">
+            <label for="chosen_result" class="col-lg-2 control-label">Linked To</label>
+            <div class="col-lg-8">
+              <input ng-model="meeting.chosen_result" name="chosen_result" type="text" class="form-control" id="chosen_result" placeholder="Linked To">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="chosen_result_id" class="col-lg-2 control-label">Linked To</label>
+            <div class="col-lg-8">
+              <input ng-model="meeting.chosen_result_id" name="chosen_result_id" type="hidden" class="form-control" id="chosen_result_id">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="status" class="col-lg-2 control-label">Status</label>
+            <div class="col-lg-8">
+              <!-- <select ng-model="meeting.status"
+                      name="status"
+                      class="form-control"
+                      id="status">
+                <option selected value>Planned</option>
+                <option>Held</option>
+                <option>Not Held</option>
+              </select> -->
+
+              <select ng-model="meeting.selected_status"
+                      ng-options="x for x in meeting_statuses"
+                      class="form-control"
+                      ng-required="true">
+                <option disabled selected value> -- Choose Status -- </option>
+              </select>
+
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="start_date" class="col-lg-2 control-label">Start Date</label>
+            <div class="col-lg-8">
+              <input ng-model="meeting.start_date" name="start_date" type="datetime-local" class="form-control" id="start_date" placeholder="Start Date">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="end_date" class="col-lg-2 control-label">End Date</label>
+            <div class="col-lg-8">
+              <input ng-model="meeting.end_date" name="end_date" type="datetime-local" class="form-control" id="end_date" placeholder="End Date">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="col-lg-2 control-label">Description</label>
+            <div class="col-lg-8">
+              <textarea ng-model="meeting.description" name="description" rows="3" placeholder="Description"></textarea>
+            </div>
+          </div>
+
+          <!-- Not currently working. Uncomment after fixing -->
+          <!-- <div class="form-group">
+            <label for="meeting_image" class="col-lg-2 control-label">Account Image</label>
+            <div class="col-lg-8">
+              <input ng-model="meeting.account_image" name="account_image" type="file" class="form-control" id="account_image" placeholder="Account Image">
+            </div>
+          </div> -->
+        </fieldset>
+      </form>
+
+    </div>
+  </div>
+</div>

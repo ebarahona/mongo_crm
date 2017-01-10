@@ -353,6 +353,63 @@ const Call = mongoose.model("Call", {
   }
 });
 
+///////////////// MEETING MODEL ///////////////////
+const Meeting = mongoose.model("Meeting", {
+  name: {
+    type: String,
+    required: true
+  },
+  linked_to: {
+    selected: String,
+    name: String,
+    name_id: String
+  },
+  status: {
+    type: String,
+    required: true
+  },
+  start_date: {
+    type: Date
+  },
+  end_date: {
+    type: Date
+  },
+  duration: {
+    type: Number
+  },
+  description: {
+    type: String
+  },
+  ownerID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  attendee_users: [{
+    type: mongoose.Schema.Types.ObjectId
+  }],
+  attendee_contacts: [{
+    type: mongoose.Schema.Types.ObjectId
+  }],
+  attendee_leads: [{
+    type: mongoose.Schema.Types.ObjectId
+  }],
+  created_at: {
+    type: Date,
+    default: Date.now,
+    required: true
+  },
+  created_by_ID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  updated_at: {
+    type: Date
+  },
+  updated_by_ID: {
+    type: mongoose.Schema.Types.ObjectId
+  }
+});
+
 //////////////// COMMENTS ///////////////////
 // Using model for accounts, contacts, users, etc.  Need to change the account below to something more generic.  Will need to make changes in other files as well.
 const Comment = mongoose.model("Comment", {
@@ -1047,50 +1104,6 @@ app.post("/contact/add_account", function(request, response) {
 
 
 ////////////// CALL ROUTES //////////////
-// ---------- Search Parent --------- //
-// Used to link calls, meetings, tasks, etc //
-app.get("/search_parent/:parent/:searchTerm", function (request, response) {
-  let parent = request.params.parent;
-  let searchTerm = request.params.searchTerm;
-  search = "/" + searchTerm + ".*/i"
-  console.log("\n\nParent: ", parent);
-  console.log("\n\nSearch: ", search);
-
-  if (parent === "Account") {
-    Account.find({
-      name: eval(search)
-    })
-      .then(function(results) {
-        console.log("There are the search results", results);
-        var type = "Account";
-        response.json({
-          type: type,
-          results: results
-        })
-      })
-      .catch(function(error) {
-        console.log("There was an error");
-      });
-  } else if (parent === "Contact") {
-    Contact.find({
-      first_name: eval(search)
-    })
-      .then(function(results) {
-        console.log("There are the search results", results);
-        var type = "Contact";
-        response.json({
-          type: type,
-          results: results
-        })
-      })
-      .catch(function(error) {
-        console.log("There was an error");
-      });
-  } else {
-    console.log("Need to update this part later!");
-  }
-});
-
 // ----------- Create Call ---------- //
 app.post("/calls/create", function(request, response) {
   let user_id = request.body.user_id;
@@ -1170,6 +1183,99 @@ app.get("/call/view/:callID", function(request, response) {
   //       console.log("\nHere are the accounts: ", accounts);
   //       response.json({
   //         call: call,
+  //         contact_accounts: accounts
+  //       });
+  //     })
+  //     .catch(function(error) {
+  //       response.status(400);
+  //       console.log("There was an error looking for the information: ", error.stack);
+  //     });
+  })
+  .catch(function(error) {
+    response.status(400);
+    console.log("There was an error looking for that account: ", error.stack);
+  });
+});
+
+
+////////////// MEETING ROUTES //////////////
+// ----------- Create Meeting ---------- //
+app.post("/meetings/create", function(request, response) {
+  let user_id = request.body.user_id;
+  console.log("This is the request sent from the front end: ", request.body);
+
+  let newMeeting = new Meeting({
+    name: request.body.meeting_info.name,
+    linked_to: {
+      selected: request.body.meeting_info.selected_parent,
+      name: request.body.meeting_info.chosen_result,
+      name_id: request.body.meeting_info.chosen_result_id
+    },
+    status: request.body.meeting_info.selected_status,
+    start_date: request.body.meeting_info.start_date,
+    end_date: request.body.meeting_info.end_date,
+    duration: request.body.meeting_info.duration,
+    description: request.body.meeting_info.description,
+    ownerID: user_id,
+    created_by_ID: user_id
+  });
+
+  newMeeting.save()
+    .then(function(result) {
+      console.log("Meeting created successfully: ", result);
+      response.json({
+        message: "Meeting created successfully"
+      });
+    })
+    .catch(function(error) {
+      response.status(400);
+      console.log("\n\n\n");
+      console.log("Didn't create account because: ", error);
+    });
+});
+
+// ----------- Show All Meetings --------- //
+app.get("/meetings", function(request, response) {
+  console.log("I'm in the backend and want to show you all my meetings");
+  Meeting.find()
+    .then(function(meetings) {
+      console.log("\nHere are my meetings: \n", meetings);
+      response.json({
+        meetings: meetings
+      });
+    })
+    .catch(function(error) {
+      console.log("There was an error getting the meetings");
+      response.status(401) ;
+      response.json({
+        message: "There was an error getting the meetings"
+      });
+    });
+});
+
+// -------------- Show Meeting ------------ //
+app.get("/meeting/view/:meetingID", function(request, response) {
+  let meetingID = request.params.meetingID;
+  console.log("I'm in the backend", meetingID);
+  Meeting.findById(meetingID)
+  .then(function(meeting) {
+    console.log("This is the meeting: ", meeting);
+    response.json({
+      meeting: meeting
+    })
+  //   let meeting_account_IDs = meeting.account;
+  //   console.log("Here are the account IDs: ", meeting_account_IDs);
+  //
+  //   return Account.find({
+  //     _id: {
+  //       $in: meeting_account_IDs
+  //     }
+  //   })
+  //     .then(function(accounts) {
+  //       console.log("\nHere is the meeting: ", meeting);
+  //       console.log("\nHere are the accounts: ", accounts);
+  //       response.json({
+  //         meeting: meeting,
   //         contact_accounts: accounts
   //       });
   //     })
@@ -1265,6 +1371,51 @@ app.get("/comments/view/:accountID", function(request, response) {
 
 
 ////////////// GENERAL ROUTES /////////////
+// ---------- Search Parent --------- //
+// Used to link calls, meetings, tasks, etc //
+app.get("/search_parent/:parent/:searchTerm", function (request, response) {
+  let parent = request.params.parent;
+  let searchTerm = request.params.searchTerm;
+  search = "/" + searchTerm + ".*/i"
+  console.log("\n\nParent: ", parent);
+  console.log("\n\nSearch: ", search);
+
+  if (parent === "Account") {
+    Account.find({
+      name: eval(search)
+    })
+      .then(function(results) {
+        console.log("There are the search results", results);
+        var type = "Account";
+        response.json({
+          type: type,
+          results: results
+        })
+      })
+      .catch(function(error) {
+        console.log("There was an error");
+      });
+  } else if (parent === "Contact") {
+    Contact.find({
+      first_name: eval(search)
+    })
+      .then(function(results) {
+        console.log("There are the search results", results);
+        var type = "Contact";
+        response.json({
+          type: type,
+          results: results
+        })
+      })
+      .catch(function(error) {
+        console.log("There was an error");
+      });
+  } else {
+    console.log("Need to update this part later!");
+  }
+});
+
+// ---------- View Calls for Users --------- //
 app.get("/view/user/calls_small_view/:searchID", function(request, response) {
   let searchID = request.params.searchID;
   console.log("I'm in the backend with this searchID: ", searchID);
@@ -1282,6 +1433,7 @@ app.get("/view/user/calls_small_view/:searchID", function(request, response) {
     })
 });
 
+// ---------- View Calls for Accounts --------- //
 app.get("/view/account/calls_small_view/:searchID", function(request, response) {
   let searchID = request.params.searchID;
   console.log("I'm in the backend with this searchID: ", searchID);
