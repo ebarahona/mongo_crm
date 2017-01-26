@@ -83,7 +83,8 @@ const User = mongoose.model("User", {
     type: String
   },
   first_name: {
-    type: String
+    type: String,
+    required: true
   },
   last_name: {
     type: String
@@ -158,7 +159,8 @@ const ProfileImage = mongoose.model("ProfileImage", {
 ////////////////// ACCOUNTS MODEL ////////////////////
 const Account = mongoose.model("Account", {
   name: {
-    type: String
+    type: String,
+    required: true
   },
   email: {
     type: String
@@ -414,7 +416,8 @@ const Meeting = mongoose.model("Meeting", {
 // Using model for accounts, contacts, users, etc.  Need to change the account below to something more generic.  Will need to make changes in other files as well.
 const Comment = mongoose.model("Comment", {
   text: {
-    type: String
+    type: String,
+    required: true
   },
   account: {
     type: mongoose.Schema.Types.ObjectId
