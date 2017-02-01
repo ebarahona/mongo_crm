@@ -17,6 +17,7 @@ MyCRM is an application that allows you to enter, see and evaluate all your comp
 **Frameworks:**  
 * Angular JS 1.6.0 (including the following services: ui-router, ngCookies, ngTouch, ngAnimate, angularFileUpload)
 * Express JS
+* Bootstrap
 
 **Other:**  
 * MongoDB
