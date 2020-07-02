@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/jcortes0309/crm_mongo#readme",
   "dependencies": {
-    "bcrypt": "^1.0.1",
+    "bcrypt": "^5.0.0",
     "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "connect-flash": "^0.1.1",
